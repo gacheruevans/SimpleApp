@@ -1,0 +1,46 @@
+{
+  "name": "simpleapp",
+  "version": "1.0.0",
+  "description": "D3 Assessment",
+  "main": "index.js",
+  "scripts": {
+    "client": "parcel ./src/index.html",
+    "server": "node server.js",
+    "build": "parcel build ./src/index.html/",
+    "lint": "eslint . --ext .js,.jsx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gacheruevans/SimpleApp.git"
+  },
+  "keywords": [
+    "D3",
+    "PERN",
+    "Assessment"
+  ],
+  "author": "Evan Gacheru",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gacheruevans/SimpleApp/issues"
+  },
+  "homepage": "https://github.com/gacheruevans/SimpleApp#readme",
+  "dependencies": {
+    "babel-loader": "^8.0.4",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
+    "eslint": "^5.10.0",
+    "eslint-loader": "^2.1.1",
+    "hapi": "^17.8.1",
+    "inert": "^5.1.2",
+    "joi": "^14.3.0",
+    "parcel-bundler": "^1.11.0",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "node-sass": "^4.11.0"
+  }
+}
