@@ -4,9 +4,9 @@
   "description": "D3 Assessment",
   "main": "index.js",
   "scripts": {
-    "client": "parcel ./src/index.html",
+    "client": "parcel ./client/index.html",
     "server": "node server.js",
-    "build": "parcel build ./src/index.html/",
+    "build": "parcel build ./client/index.html/",
     "lint": "eslint . --ext .js,.jsx",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
