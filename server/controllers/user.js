@@ -17,21 +17,21 @@ module.exports = {
     list(req, res) {
         return User
         .all()
-        .then(users => res.status(200).send(users))
+        .then(user => res.status(200).send(user))
         .catch(error => res.status(400).send(error));
     },
     //list all notes of every user 
-    list(req, res) {
-        return User
-        .findAll({
-            include: [{
-                model: Notes,
-                as: 'Notes'
-            }],
-        })
-        .then(users => res.status(200).send(users))
-        .catch(error => res.status(200).send(error));
-    },
+    // list(req, res) {
+    //     return User
+    //     .findAll({
+    //         include: [{
+    //             model: Notes,
+    //             as: 'Notes'
+    //         }],
+    //     })
+    //     .then(users => res.status(200).send(users))
+    //     .catch(error => res.status(200).send(error));
+    // },
     //find notes by user id
     retrieve(req, res) {
         return User
@@ -51,4 +51,28 @@ module.exports = {
         })
         .catch(error => res.status(400).send(error));
     },
+    //update user details
+    update(req, res) {
+        return User
+        .findById(req.params.userId, {
+            include: [{
+                model: Notes,
+                as: 'Notes'
+            }],
+        })
+        .then(user => {
+            if(!user) {
+                return res.status(404).send({
+                    message: 'User Not Found'
+                })
+            }
+            return user
+            .update({
+                password: req.body.password || user.password
+            })
+            .then(()=> res.status(200).send(user))
+            .catch(error => res.status(400).send(error));
+        })
+        .catch(error => res.status(400).send(error));
+    }
 };

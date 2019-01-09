@@ -7,9 +7,12 @@ module.exports = (app) => {
         message: 'welcome to Notes Application'
     }));
 
-    app.post('/api/users', userController.create); //create users
-    app.post('/api/users/:userId/notes', notesController.create); //User creates notes
+    app.post('/api/users', userController.create); //Create users
     app.get('/api/users', userController.list); //list all users
-    app.get('/api/notes/:userId' , userController.retrieve); //retrieve notes as per user id
+
+    app.put('/api/users/:userId', userController.update); //Updates user details
+    
+    app.post('/api/users/:userId/notes', notesController.create); //User creates notes
+    app.get('/api/notes/:userId' , userController.retrieve); //Retrieve notes as per user id
 
 };

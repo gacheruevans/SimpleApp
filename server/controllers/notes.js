@@ -9,7 +9,7 @@ module.exports = {
             description: req.body.description,
             userId: req.params.userId
         })
-        .then(notes => res.status(201).send(notes))
+        .then(userNotes => res.status(201).send(userNotes))
         .catch(error => res.status(400).send(error));
     },
 };
