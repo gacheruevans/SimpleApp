@@ -38,7 +38,7 @@ module.exports = {
         .catch(error => res.status(400).send(error));
     },
     //delete note functionality
-    destroy(res, req) {
+    destroy(req, res) {
         return Notes
         .find({
             where: {

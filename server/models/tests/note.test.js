@@ -25,8 +25,8 @@ describe('Get all Notes', ()=> {
         let expectedResult = {status: false, error: 'Something went wrong'};
         NotesMock.expects('find').yields(expectedResult, null);
         Notes.find((err, res)=> {
-            NotesMock.verify();
-            NotesMock.restore();
+            NotesMock.verify(); //Verifies all expectations in a mock
+            NotesMock.restore(); //Restores all mocked methods
             expect(err.status).to.not.be.true;
             done();
         });
@@ -36,7 +36,7 @@ describe('Get all Notes', ()=> {
 
 describe('Post a new note', () => {
     //Test will pass if the note is saved
-    it('should create a now note', (done) => {
+    it('should create a new note', (done) => {
         let NotesMock = sinon.mock(new Notes({ 
             title: 'new note',
             description: 'save new note from mock'
@@ -48,6 +48,22 @@ describe('Post a new note', () => {
             NotesMock.verify();
             NotesMock.restore();
             expect(res.status).to.be.true;
+            done();
+        });
+    });
+    //Test will pass if the note is not saved
+    it('should return error, if post not saved', (done) => {
+        let NotesMock = sinon.mock(new Notes({
+            title: 'new note',
+            description: 'save new note from mock'
+        }));
+        let note = NotesMock.object;
+        let expectedResult = { status: false };
+        NotesMock.expects('save').yields(expectedResult, null);
+        note.save((err, res) => {
+            NotesMock.verify();
+            NotesMock.restore();
+            expect(err.status).to.not.be.true;
             done();
         });
     });

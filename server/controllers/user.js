@@ -1,18 +1,9 @@
 'use strict'
 const User= require('../models').Users;
 const Notes = require('../models').Notes;
+const bcrypt = require('bcrypt');
 
 module.exports = {
-    //create user
-    create(req, res) {
-        return User
-        .create({
-            username: req.body.username,
-            password: req.body.password
-        })
-        .then(user => res.status(201).send(user))
-        .catch(error => res.status(400).send(error));
-    },
     //fetch all users
     list(req, res) {
         return User

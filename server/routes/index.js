@@ -1,4 +1,5 @@
 'use strict'
+const authController = require('../controllers').auth;
 const notesController = require('../controllers').notes;
 const userController = require('../controllers').user;
 
@@ -7,7 +8,8 @@ module.exports = (app) => {
         message: 'welcome to Notes Application'
     }));
 
-    app.post('/api/users', userController.create); //Create users
+    app.post('/api/register', authController.register); //register users
+
     app.get('/api/users', userController.list); //list all users
     app.get('/api/users/:userId', userController.retrieve); //list a specific user and his/her details
     app.put('/api/users/:userId', userController.update); //Updates user details
