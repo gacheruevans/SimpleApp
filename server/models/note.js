@@ -2,19 +2,24 @@
 
 module.exports = (sequelize, DataTypes) => {
 
-  const NoteItem = sequelize.define('Note', {
+  const Notes = sequelize.define('Notes', {
     title: {
       type: DataTypes.STRING,
       allowNull: false
     },
     description: {
-      type :DataTypes.TEXT,
+      type: DataTypes.TEXT,
       allowNull: false
     }
   });
 
-  Note.associate = function(models) {
+  Notes.associate = (models) => {
     // associations can be defined here
+    Notes.belongsTo(models.Users, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
-  return NoteItem;
+
+  return Notes;
 };
