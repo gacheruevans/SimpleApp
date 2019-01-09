@@ -2,7 +2,7 @@
 
 D3-Assessment-PERN
 
-## Installation
+## Installation && Running of App.
 
 Clone the repository via ssh or https to your local environment.
 `git@github.com:gacheruevans/SimpleApp.git` or `https://github.com/gacheruevans/SimpleApp.git`
