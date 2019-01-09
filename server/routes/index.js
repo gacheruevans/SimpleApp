@@ -11,8 +11,9 @@ module.exports = (app) => {
     app.get('/api/users', userController.list); //list all users
 
     app.put('/api/users/:userId', userController.update); //Updates user details
-    
+
     app.post('/api/users/:userId/notes', notesController.create); //User creates notes
-    app.get('/api/notes/:userId' , userController.retrieve); //Retrieve notes as per user id
+    app.get('/api/users/:userId/notes', userController.retrieve); //Retrieve notes as per user id
+    app.put('/api/users/:userId/notes/:noteId',  notesController.update); //Update a note owned by the user, using his user id
 
 };

@@ -21,24 +21,24 @@ module.exports = {
         .catch(error => res.status(400).send(error));
     },
     //list all notes of every user 
-    // list(req, res) {
-    //     return User
-    //     .findAll({
-    //         include: [{
-    //             model: Notes,
-    //             as: 'Notes'
-    //         }],
-    //     })
-    //     .then(users => res.status(200).send(users))
-    //     .catch(error => res.status(200).send(error));
-    // },
+    list(req, res) {
+        return User
+        .findAll({
+            include: [{
+                model: Notes,
+                as: 'noteItems'
+            }],
+        })
+        .then(users => res.status(200).send(users))
+        .catch(error => res.status(200).send(error));
+    },
     //find notes by user id
     retrieve(req, res) {
         return User
         .findById(req.params.userId, {
             include: [{
                 model: Notes,
-                as: 'Notes'
+                as: 'noteItems'
             }],
         })
         .then(user => {
@@ -57,7 +57,7 @@ module.exports = {
         .findById(req.params.userId, {
             include: [{
                 model: Notes,
-                as: 'Notes'
+                as: 'noteItems'
             }],
         })
         .then(user => {

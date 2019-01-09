@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     // Association User model to Notes model via foreignkey
     Users.hasMany(models.Notes, {
       foreignKey: 'userId',
-      as: 'Notes'
+      as: 'noteItems'
     })
   };
   return Users;
