@@ -74,5 +74,26 @@ module.exports = {
             .catch(error => res.status(400).send(error));
         })
         .catch(error => res.status(400).send(error));
+    },
+    //delete user record and all subsequent notes
+    destroy(req, res) {
+        return User
+        .findById(req.params.userId, {
+            include: [{
+                model: Notes,
+                as: 'noteItems'
+            }]
+        })
+        .then( user => {
+            if(!user) {
+                return res.status(404).send({
+                    message: 'User Not Found'
+                })
+            }
+            return user
+            .destroy()
+            .then(()=> res.status(204).send())
+            .catch(error => res.status(400).send(error));
+        })
     }
 };
