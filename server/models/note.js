@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Notes.associate = (models) => {
-    // associations can be defined here
+    // Create user model association with notes model. 
     Notes.belongsTo(models.Users, {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
