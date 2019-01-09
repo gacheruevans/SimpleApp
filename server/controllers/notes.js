@@ -6,16 +6,10 @@ module.exports = {
         return Notes
         .create({
             title: req.body.title,
-            description: req.body.description
+            description: req.body.description,
+            userId: req.params.userId
         })
         .then(notes => res.status(201).send(notes))
-        .catch(error => res.status(400).send(error));
-    },
-    //List all notes function
-    list(req, res) {
-        return Notes
-        .all()
-        .then(notes => res.status(200).send(notes))
         .catch(error => res.status(400).send(error));
     },
 };

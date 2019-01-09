@@ -13,10 +13,17 @@ module.exports = {
         .then(user => res.status(201).send(user))
         .catch(error => res.status(400).send(error));
     },
+    //fetch all users
+    list(req, res) {
+        return User
+        .all()
+        .then(users => res.status(200).send(users))
+        .catch(error => res.status(400).send(error));
+    },
     //list all notes of every user 
     list(req, res) {
         return User
-        findAll({
+        .findAll({
             include: [{
                 model: Notes,
                 as: 'Notes'
@@ -28,7 +35,7 @@ module.exports = {
     //find notes by user id
     retrieve(req, res) {
         return User
-        findById(req.params.userId, {
+        .findById(req.params.userId, {
             include: [{
                 model: Notes,
                 as: 'Notes'
@@ -43,5 +50,5 @@ module.exports = {
             return res.status(200).send(user)
         })
         .catch(error => res.status(400).send(error));
-    }
+    },
 };

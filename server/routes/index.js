@@ -7,10 +7,8 @@ module.exports = (app) => {
         message: 'welcome to Notes Application'
     }));
 
-    app.post('/api/notes', notesController.create); //create notes
-    app.get('/api/notes', notesController.list); // list all notes in api
-
-    app.post('/api/user', userController.create); //create users
+    app.post('/api/users', userController.create); //create users
+    app.post('/api/users/:userId/notes', notesController.create); //User creates notes
     app.get('/api/users', userController.list); //list all users
     app.get('/api/notes/:userId' , userController.retrieve); //retrieve notes as per user id
 
