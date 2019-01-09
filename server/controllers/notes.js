@@ -13,11 +13,11 @@ module.exports = {
         .catch(error => res.status(400).send(error));
     },
     //update note functionality
-    update(res, req) {
+    update(req, res) {
         return Notes
         .find({
             where: {
-                id: req.params.noteId,
+                id: req.params.notesId,
                 userId: req.params.userId,
             },
         })
