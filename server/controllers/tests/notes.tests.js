@@ -9,11 +9,11 @@ const app = require('../../../server');
 
 chai.use(chaiHttp);
 
-describe('User Test functionality', ()=> {
+describe('/POST new user', ()=> {
     it('Should create a new user', () =>{
         let newUser = {
-            usernaem: 'tester',
-            passwprd: 'pass1234'
+            username: 'tester',
+            password: 'pass1234'
         }
 
         chai.request(app)
@@ -21,8 +21,9 @@ describe('User Test functionality', ()=> {
         .type('form')
         .send(newUser)
         .end((err, res) => {
-            expect(err).to.be.null;
-            expect(res).to.have.status(201);
+            expect(err).to.have.status(201);
+            expect(err).to.be.undefined;
+            expect(res).to.ba.an('object');
         });
     });
 });

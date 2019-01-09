@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "client": "parcel ./client/index.html",
-    "server": "nodemon server.js",
+    "server": "nodemon ./bin/www",
     "build": "parcel build ./client/index.html/",
     "lint": "eslint . --ext .js,.jsx",
     "test": "mocha ./server/controllers/tests/**/*.*"
