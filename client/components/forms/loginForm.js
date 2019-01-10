@@ -1,7 +1,7 @@
 'use strict'
 import React, { Component } from "react";
+import { ButtonToolbar, Button } from 'react-bootstrap';
 import "./style.scss";
-
 
 class Login extends Component {
     constructor(props, context) {
@@ -31,20 +31,21 @@ class Login extends Component {
           <div className="login-form">
             <form >
                 <div className="form-title"><h3 className="my-3"> Login:</h3></div>
-                <div className="email-rw">
-                    <label>Email</label>
-                    <input type="email" id="email"/>
+
+                <div className="form-body">
+                    <div className="email-rw">
+                        <label>Username</label>
+                        <input type="email" id="email" placeholder="email"/>
+                    </div>
+                    <div className="pass-rw">
+                        <label>Password</label>
+                        <input type="password"id="password" placeholder="password"/>
+                    </div>
                 </div>
-                <div className="pass-rw">
-                    <label>Password</label>
-                    <input type="password"id="password"/>
-                </div>
-                <div className="text-center mt-4">
-                    <button  type="submit"> Login</button>
-                </div>
-                <div className="font-weight-light">
-                    <p>Not a member? Sign Up</p>
-                    <p>Forgot Password?</p>
+                
+                <div className= "footer">
+                    <button className="loginBtn">Login</button>
+                    <button className="registerBtn">Register</button>
                 </div>
             </form>
         </div> 

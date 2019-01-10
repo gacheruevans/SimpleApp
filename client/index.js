@@ -7,7 +7,7 @@ import "./sass/main.scss";
 const App = () =>{
   return (
     <div>
-      <h1>Simple Application</h1>
+      <h1>Notes Application</h1>
       <Login />
     </div>
   )
