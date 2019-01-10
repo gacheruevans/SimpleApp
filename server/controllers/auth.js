@@ -1,50 +1,53 @@
 'use strict'
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const config = require('../config/config');
 const User = require('../models').Users;
 
 //WIP-Work in progress
 module.exports = {
    register(req, res) {
-       //Hashing password
-        const hash = bcrypt.hashSync(req.body.password, 10);
-        try {
-            // create a new user with the password hash from bcrypt
-            let user = User.create(
-              Object.assign(req.body, {password: hash })
-            );
-        
-            // data will be an object with the user and it's authToken
-            let data = user.authorize();
-        
-            // send back the new user and auth token to the
-            // client { user, authToken }
-            return res.json(data);
-        
-          } catch(err) {
-            return res.status(400).send(err);
-          }
+        //Hashing password using bcrypt
+        const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+        User.create({
+            username : req.body.username,
+            password: hashedPassword
+        })
+        .then( user => {
+            // Create a token by making a payload and secrete key in config file
+            let token = jwt.sign({id: user._id}, config.secret, {
+                expiresIn: 86400 // expires in 24hours
+            });
+            res.status(200).send({ auth: true, token: token});
+            res.status(201).send(user);
+        })
+        .catch(error => res.status(400).send({
+            error: 'Something went wrong!'
+        }))
    },
    login(req, res) {
-        const { username, password } = req.body;
+       //Check if user exists
+       User.findOne({username: req.body.username}, (err, user) => {
+           if (err) {
+                return res.status(500).send('Error on the server.');
+           }
+           if (!user) {
+                return res.status(404).send('No user found.');
+           }
+           //Compare whether hashed passwords match 
+           let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+           if (!passwordIsValid) {
+               return res.status(401).send({
+                   auth: false,
+                   token: null
+               });
+           }
 
-        // Checks if the username / password is missing, 
-        if (!username || !password) {
-
-            return res.status(400).send(
-                'Request missing username or password param'
-            );
-        }
-    
-        try {
-            let user = User.authenticate(username, password)
-        
-            user = user.authorize();
-        
-            return res.json(user);
-    
-        } catch (err) {
-            return res.status(400).send('invalid username or password');
-        }
+           let token = jwt.sign({id: user._id}, config.secret, {
+                expiresIn: 86400 // expires in 24hours
+           });
+           res.status(200).send({ auth: true, token: token });
+       }); 
    }
 
 };

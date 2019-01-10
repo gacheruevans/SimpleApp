@@ -1,7 +1,4 @@
 'use strict'
-const customAuthMiddleware = require('./server/middleware/auth-middleware');//handles authentication
-const cookieParser = require('cookie-parser');
-
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
@@ -9,15 +6,28 @@ const bodyParser = require('body-parser');
 //set up express app
 const app = express();
 
+// Import the library:
+var cors = require('cors');
+
+// Set up a whitelist and check against it to handle api cors
+let whitelist = ['http://localhost:1234']
+var corsOptions = {
+  origin:  (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+};
+
+app.use(cors(corsOptions));
+
 // Log requests to the console.
 app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use( bodyParser.urlencoded({ extended: false,}));
-
-//Cookie-parser to help with auth token
-app.use(cookieParser());
-app.use(customAuthMiddleware);
 
 // Require our routes into the application.
 require('./server/routes')(app);

@@ -1,15 +1,16 @@
 'use strict'
+const jwt = require('jsonwebtoken');
 const User= require('../models').Users;
 const Notes = require('../models').Notes;
-const bcrypt = require('bcrypt');
 
 module.exports = {
     //fetch all users
     list(req, res) {
+
         return User
         .all()
         .then(user => res.status(200).send(user))
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(400).send(error));    
     },
     //list all notes of every user 
     list(req, res) {
