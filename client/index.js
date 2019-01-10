@@ -17,7 +17,7 @@ const App = () => {
         </div>
 
         <div className="header" id="myHeader">
-          <h2>NOTY</h2>
+          <h2>NOTY!</h2>
         </div>
         <div className="content"> <Login /></div>
     </div>

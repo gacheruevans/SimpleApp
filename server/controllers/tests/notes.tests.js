@@ -6,11 +6,10 @@ const expect = chai.expect;
 
 //import express app
 const app = require('../../../server');
-const Notes = require('../../models').Notes;
 
 chai.use(chaiHttp);
 
-describe('Test user  functions scope', ()=> {
+describe('Test user functions scope', ()=> {
     it('Should create a new user', () =>{
         let newUser = {
             username: 'tester',
@@ -18,19 +17,19 @@ describe('Test user  functions scope', ()=> {
         }
 
         chai.request(app)
-        .post('/api/users')
+        .post('/api/notes/register')
         .type('form')
         .send(newUser)
         .end((err, res) => {
-            expect(err).to.have.status(201);
-            expect(err).to.be.undefined;
+            expect(res).to.have.status(201);
+            expect(res).to.be.undefined;
             expect(res).to.ba.an('object');
         });
     });
     it('Should fetch all current users', () =>{
 
         chai.request(app)
-        .get('/api/users')
+        .get('/api/notes/users')
         .end((err, res) => {
             expect(res).to.have.status(200);
             expect(res).to.be.undefined;
@@ -45,7 +44,7 @@ describe('Test user  functions scope', ()=> {
         }
 
         chai.request(app)
-        .get('/api/users/'+User.id)
+        .get('/api/notes/users/'+User.id)
         .end((err, res) => {
             expect(err).to.have.status(200);
             expect(res).to.ba.an('object');
