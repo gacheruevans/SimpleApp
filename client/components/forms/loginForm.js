@@ -6,52 +6,67 @@ import "./style.scss";
 
 class Login extends Component {
     constructor(props, context) {
-      super(props, context);
-  
-    this.login = this.login.bind(this);
-  
-      this.state = {
-        value: ''
-      };
+        super(props, context);
+        this.state = {
+            username:'',
+         password: ''
+        };
+        
+        this.onChangeUsername = this.onChangeUsername.bind(this);
+        this.onChangePassword = this.onChangePassword.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
   
-    login(e) {
-        let username = document.getElementById('email');
-        let password = document.getElementById('password').value;
-        resultElement.innerHTML = '';
-
-        axios.post('http://jsonplaceholder.typicode.com/todos', {
-            username: username,
-            password: password
-        })
-        .then(resultElement.innerHTML, (error, res) => {
-          resultElement.innerHTML = generateSuccessHTMLOutput(res);
-        })
-        .catch(error => res.status(400).send(error));
-        
+    onChangeUsername (e){
+        this.setState({
+            username: e.target.value
+        });
+        console.log("username >>> ", this.state.username)
+    }
+    onChangePassword (e){
+        this.setState({
+            password: e.target.value
+        });
+        console.log("username >>> ", this.state.password)
+    }
+  
+    onSubmit(e) {
         e.preventDefault();
+       
+        const recordData = {
+            username: this.state.username,
+            password: this.state.password
+        }
+        console.log("recordData >>>>>", recordData)
+        axios.post('http://localhost:3000/api/notes/register', recordData)
+        .then(res => console.log(res.data));
+
+        this.setState({
+            username: '',
+            password:''
+        }); 
     }
   
     render() {
       return (
           <div className="login-form">
-            <form >
+            <form onSubmit={this.onSubmit}>
                 <div className="form-title"><h3 className="my-3"> Login Form</h3></div>
 
                 <div className="form-body">
                     <div className="email-rw">
                         <label>Username</label>
-                        <input type="email" id="email" name="email"  placeholder="email" required/>
+                        <input type="email" id="email" name="email"  placeholder="email" value={this.state.username}  onChange={this.onChangeUsername} required/>
                     </div>
                     <div className="pass-rw">
                         <label>Password</label>
-                        <input type="password" id="password" name="password"  placeholder="password" required/>
+                        <input type="password" id="password" name="password"  placeholder="password" value={this.state.password} onChange={this.onChangePassword} required/>
                     </div>
                 </div>
                 
                 <div className= "footer">
-                    <button className="loginBtn" onClick={this.login}>Login</button>
-                    <button className="registerBtn">Register</button>
+                    <button type="submit" className="loginBtn">Login</button>
+                    <a className="registerBtn" href="#">Register</a>
                 </div>
             </form>
         </div> 

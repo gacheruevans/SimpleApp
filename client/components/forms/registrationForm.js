@@ -1,10 +1,12 @@
 'use strict'
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import axios from "axios";
 
 import "./style.scss";
+import Login from "./loginForm";
 
-class Login extends Component {
+class Register extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -20,13 +22,11 @@ class Login extends Component {
         this.setState({
             username: e.target.value
         });
-        console.log("username >>> ", this.state.username)
     }
     onChangePassword (e){
         this.setState({
             password: e.target.value
         });
-        console.log("username >>> ", this.state.password)
     }
   
     onSubmit(e) {
@@ -36,14 +36,13 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        console.log("recordData >>>>>", recordData)
         axios.post('http://localhost:3000/api/notes/register', recordData)
         .then(res => console.log(res.data));
 
         this.setState({
             username: '',
-            password:''
-        });
+            password: ''
+        }); 
         
     }
   
@@ -65,7 +64,7 @@ class Login extends Component {
                 </div>
                 
                 <div className= "footer">
-                    <a href="#" >Login</a>
+                    <Router><Route exact path="/" component={Login} /></Router>
                     <button type="submit" className="registerBtn">Register</button>
                 </div>
             </form>
@@ -73,7 +72,7 @@ class Login extends Component {
       );
     }
   }
-  export default Login;
+  export default Register;
 
   
 
