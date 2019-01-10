@@ -1,6 +1,7 @@
 "use strict"
 import React, { Component } from "react";
 import axios from 'axios';
+import "./style.scss";
 
 class Welcome extends Component {
     constructor(props) {
@@ -28,16 +29,16 @@ class Welcome extends Component {
         let getItems = () => {
             const items= this.state.users.noteItems;
             return Object.values(items).map((x,val) => {
-               return( <li key={x}>{ Object.values(x) }</li>)
+               return( <div key={x} className="list-items">{ Object.values(x) }</div>)
              });
         }
         return (
             <div>
-                <div>
+                <div className="account-body">
                     <h3>{this.state.users.username} Account</h3>
-                     <ul>
+                     <div className="note-card">
                         {items && getItems()}
-                     </ul>
+                     </div>
                 </div>
             </div>
         );
