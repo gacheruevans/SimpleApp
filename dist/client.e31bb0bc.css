@@ -1,0 +1,88 @@
+h3 {
+  text-align: center;
+  font-weight: 600;
+  margin: 0r auto;
+  font-size: 18px;
+  padding: 20px; }
+
+.login-form {
+  background-color: #ffffff;
+  color: black;
+  width: 30%;
+  margin: 80px auto;
+  padding: 5px;
+  border: 1px solid #d3d3d3;
+  border-radius: 3px; }
+
+label {
+  width: 300px;
+  right: 20px;
+  padding: 10px;
+  font-size: 18px; }
+
+input {
+  margin: 0 auto;
+  padding: 2px;
+  font-size: 16px; }
+
+.email-rw {
+  padding: 2px; }
+
+.pass-rw {
+  padding: 10px; }
+
+.form-body {
+  text-align: center;
+  margin: 0 auto;
+  padding: 10px; }
+
+.loginBtn {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+
+.registerBtn {
+  background-color: #4c4eaf;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer; }
+
+.footer {
+  text-align: center;
+  margin: 0 auto; }
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; }
+
+html {
+  font-size: 62.5%; }
+
+body {
+  background-color: #ecf0f1;
+  color: #0067ee;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.7rem;
+  padding: 3rem; }
+
+h1 {
+  text-align: center;
+  font-weight: 300;
+  margin-top: 5rem;
+  font-size: 5rem; }

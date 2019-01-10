@@ -18,21 +18,26 @@ class Welcome extends Component {
         };
         axios.get('http://localhost:3000/api/notes/users/'+ userId , header)
             .then(res => {
-                const users = res.data;
-                console.log("note Itemsdata >>>>>", this.state.users.noteItems);
-                this.setState({ users });
+                this.setState({ users: res.data });
             })
     }
-
     render() {
+        const items= this.state.users.noteItems;
+        console.log("Items outside!!! >>>>>",items);
+
+        let getItems = () => {
+            const items= this.state.users.noteItems;
+            return Object.values(items).map((x,val) => {
+               return( <li key={x}>{ Object.values(x) }</li>)
+             });
+        }
         return (
             <div>
                 <div>
                     <h3>{this.state.users.username} Account</h3>
-                  
-                        {JSON.stringify(this.state.users.noteItems, null, 8)}
-                        {/* {this.state.users.noteItems.item} */}
-                
+                     <ul>
+                        {items && getItems()}
+                     </ul>
                 </div>
             </div>
         );
