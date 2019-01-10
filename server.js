@@ -10,7 +10,7 @@ const app = express();
 var cors = require('cors');
 
 // Set up a whitelist and check against it to handle api cors
-let whitelist = ['http://localhost:1234']
+let whitelist = ['http://localhost:1234', 'http://localhost:8080']
 var corsOptions = {
   origin:  (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {
@@ -21,7 +21,7 @@ var corsOptions = {
   }
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Log requests to the console.
 app.use(logger('dev'));
