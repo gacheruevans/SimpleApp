@@ -9,7 +9,8 @@ module.exports = (app) => {
     }));
 
     app.post('/api/register', authController.register); //register users
-
+    app.post('/api/login', authController.login); //login of users
+    
     app.get('/api/users', userController.list); //list all users
     app.get('/api/users/:userId', userController.retrieve); //list a specific user and his/her details
     app.put('/api/users/:userId', userController.update); //Updates user details

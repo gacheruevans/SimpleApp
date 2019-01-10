@@ -1,14 +1,15 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const AuthToken = sequelize.define('AuthToken', {
-    token: DataTypes.STRING,
-    allowNull: false
-  }, {});
+    token: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+    
+  });
   AuthToken.associate = (models) => {
     // Link Auth token and users model
-    AuthToken.associate = ({Users}) =>{
-      AuthToken.belongsTo(Users)
-    };
+      AuthToken.belongsTo(models.Users)
   };
 
   // Generates a random 15 character token & associates it with a user

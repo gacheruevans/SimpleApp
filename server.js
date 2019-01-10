@@ -1,4 +1,6 @@
 'use strict'
+const customAuthMiddleware = require('./server/middleware/auth-middleware');//handles authentication
+const cookieParser = require('cookie-parser');
 
 const express = require('express');
 const logger = require('morgan');
@@ -12,6 +14,10 @@ app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use( bodyParser.urlencoded({ extended: false,}));
+
+//Cookie-parser to help with auth token
+app.use(cookieParser());
+app.use(customAuthMiddleware);
 
 // Require our routes into the application.
 require('./server/routes')(app);
