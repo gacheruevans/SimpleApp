@@ -1,6 +1,5 @@
 'use strict'
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import axios from "axios";
 
 import "./style.scss";

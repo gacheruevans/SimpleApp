@@ -11,7 +11,7 @@ class Login extends Component {
             username:'',
          password: ''
         };
-        
+
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -21,13 +21,11 @@ class Login extends Component {
         this.setState({
             username: e.target.value
         });
-        console.log("username >>> ", this.state.username)
     }
     onChangePassword (e){
         this.setState({
             password: e.target.value
         });
-        console.log("username >>> ", this.state.password)
     }
   
     onSubmit(e) {
@@ -37,7 +35,6 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        console.log("recordData >>>>>", recordData)
         axios.post('http://localhost:3000/api/notes/register', recordData)
         .then(res => console.log(res.data));
 
