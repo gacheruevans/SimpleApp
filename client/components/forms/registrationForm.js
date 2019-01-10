@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import axios from "axios";
 
 import "./style.scss";
-import Login from "./loginForm";
 
 class Register extends Component {
     constructor(props, context) {
@@ -64,7 +63,7 @@ class Register extends Component {
                 </div>
                 
                 <div className= "footer">
-                    <Router><Route exact path="/" component={Login} /></Router>
+                    <a href="#" >Login</a>
                     <button type="submit" className="registerBtn">Register</button>
                 </div>
             </form>
