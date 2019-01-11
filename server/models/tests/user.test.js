@@ -12,8 +12,8 @@ describe('Get all Notes By Id', ()=> {
     //Test will pass if we get all user notes
     it('Should return all notes of a user by Id', (done) => {
         let NotesMock = sinon.mock(Users);
-        let expectedResult = {status: true, notes: []};
-        NotesMock.expects('find').withArgs({_userId: 1}).yields(null, expectedResult);
+        let expectedResult = {status: true, id: 1 ,username:'', noteItems: []};
+        NotesMock.expects('find').withArgs({id: 23451}).yields(null, expectedResult);
         Notes.find((err,res) => {
             NotesMock.verify();
             NotesMock.restore();
@@ -24,7 +24,7 @@ describe('Get all Notes By Id', ()=> {
     it('Should return error', (done) => {
         let NotesMock = sinon.mock(Notes);
         let expectedResult = {status: false, error: 'Something went wrong'};
-        NotesMock.expects('find').withArgs({_id: 1}).yields(expectedResult, null);
+        NotesMock.expects('find').withArgs({_id: 23451}).yields(expectedResult, null);
         Notes.find((err, res)=> {
             NotesMock.verify();
             NotesMock.restore();
@@ -44,7 +44,7 @@ describe('Post a new note', () => {
         }));
         let note = NotesMock.object;
         let expectedResult = { status: true };
-        NotesMock.expects('save').withArgs({_userId: 1}).yields(null, expectedResult);
+        NotesMock.expects('save').withArgs({_id: 23451}).yields(null, expectedResult);
         note.save((err, res) => {
             NotesMock.verify();
             NotesMock.restore();
@@ -60,7 +60,7 @@ describe('Post a new note', () => {
         }));
         let note = NotesMock.object;
         let expectedResult = { status: false };
-        NotesMock.expects('save').withArgs({_userId: null}).yields(expectedResult, null);
+        NotesMock.expects('save').withArgs({_id: null}).yields(expectedResult, null);
         note.save((err, res) => {
             NotesMock.verify();
             NotesMock.restore();
@@ -73,13 +73,10 @@ describe('Post a new note', () => {
 describe('Update a note by id', () => {
     //Test will pass if note is updated based on Id
     it('should update a note by id', (done) => {
-        let NotesMock = sinon.mock(new Notes({
-            title: 'update',
-            description: 'updating note'
-        }));
+        let NotesMock = sinon.mock(new Notes({title: 'update'}));
         let note = NotesMock.object;
         let expectedResult = { status: true };
-        NotesMock.expects('save').withArgs({_id: 1}).yields(null, expectedResult);
+        NotesMock.expects('save').once().withArgs({_id: 23451});
         note.save((err, res) => {
             NotesMock.verify();
             NotesMock.restore();

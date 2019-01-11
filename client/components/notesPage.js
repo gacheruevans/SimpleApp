@@ -29,7 +29,11 @@ class Welcome extends Component {
         let getItems = () => {
             const items= this.state.users.noteItems;
             return Object.values(items).map((x,val) => {
-               return( <div key={x} className="list-items">{ Object.values(x) }</div>)
+               return( <div key={x} className="list-items">
+                            { Object.values(x) }
+                            <button type="submit" value={x}>Edit</button>
+                            <button type="submit" value={x} onClick={this.Delete}>Delete</button>
+                        </div>)
              });
         }
         return (

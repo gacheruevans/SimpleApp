@@ -26093,7 +26093,14 @@ function (_Component) {
           return _react.default.createElement("div", {
             key: x,
             className: "list-items"
-          }, Object.values(x));
+          }, Object.values(x), _react.default.createElement("button", {
+            type: "submit",
+            value: x
+          }, "Edit"), _react.default.createElement("button", {
+            type: "submit",
+            value: x,
+            onClick: _this3.Delete
+          }, "Delete"));
         });
       };
 
@@ -26171,7 +26178,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53355" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49738" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
