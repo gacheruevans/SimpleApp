@@ -17,35 +17,6 @@ body {
   line-height: 1.7rem;
   height: 1800px;
 }
-
-.top-container {
-  background-color: #f1f1f1;
-  padding: 30px;
-  text-align: center;
-}
-
-.header {
-  padding: 10px 16px;
-  background: #555;
-  color: #f1f1f1;
-}
-
 .content {
   padding: 16px;
-}
-
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-.sticky + .content {
-  padding-top: 102px;
-}
-h1 {
-  text-align: center;
-  font-weight: 300;
-  margin-top: 1rem;
-  font-size: 5rem;
 }

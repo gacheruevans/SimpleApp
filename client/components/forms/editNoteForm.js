@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 import React, { Component } from "react";
 import axios from "axios";
 
@@ -16,7 +16,6 @@ class EditNote extends Component {
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-  
     }
     onChangeTitle (e){
         this.setState({
@@ -38,9 +37,16 @@ class EditNote extends Component {
             title: this.state.title,
             description: this.state.description
         }
-        axios.post('http://localhost:3000/api/notes/users/'+userId+'/note/'+noteID, recordData)
-        .then(res => console.log(res.data));
+        //Checks whether there is data in the recordData object
+        if (recordData) {
+            axios.put("http://localhost:3000/api/notes/users/"+userId+"/note/"+noteID, recordData)
+            .then(res => console.log(res.data));
 
+            alert("Note has been Edited successfully!");
+
+        }else{
+            alert("Something went wrong!!!");
+        }
     }
   
     render() {
@@ -55,8 +61,8 @@ class EditNote extends Component {
                         <input type="text" id="title" name="title"  value={this.state.title}  onChange={this.onChangeTitle} required/>
                     </div>
                     <div className="secondfield-rw">
-                        <label>Description</label>
-                        <input type="text" id="description" name="description"  placeholder="description" value={this.state.description} onChange={this.onChangeDescription} required/>
+                        <label className="description">Description</label>
+                        <textarea id="description" name="description" rows="4" cols="50" value={this.state.description} onChange={this.onChangeDescription} required></textarea>
                     </div>
                 </div>
                 

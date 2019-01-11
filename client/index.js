@@ -1,26 +1,20 @@
+//Libs
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Register from "./components/forms/RegistrationForm";
+//Component
 import Login from "./components/forms/loginForm";
-import NotesList from "./components/notesPage";
+import { Header } from "./components/base/header";
 
+//Styles
 import "./sass/main.scss";
 
 const App = () => {
   return (
     <div>
-        
-        <div className="top-container">
-          <h1>Welcome</h1>
-        </div>
-        <div className="header" id="myHeader">
-          <h2>NOTY!</h2>
-        </div>
+        <Header />
         <div className="content"> 
-            {/* <Login /> */}
-            {/* <Register /> */}
-            <NotesList />
+            <Login />
         </div>
     </div>
   )

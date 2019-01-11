@@ -42,21 +42,20 @@ module.exports = {
         return Notes
         .find({
             where: {
-                id: req.params.noteId,
+                id: req.params.notesId,
                 userId: req.params.userId,
             },
         })
-        .then(note => {
-            if(!note){
+        .then( note => {
+            if(!note) {
                 return res.status(404).send({
                     message: 'Note Not Found'
-                });
+                })
             }
             return note
             .destroy()
             .then(()=> res.status(204).send())
             .catch(error => res.status(400).send(error));
         })
-        .catch(error => res.status(400).send(error));
     }
 };

@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 import React, { Component } from "react";
 import axios from "axios";
 
@@ -8,8 +8,8 @@ class Register extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            username:'',
-            password: ''
+            username:"",
+            password: ""
         };
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
@@ -34,13 +34,18 @@ class Register extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        axios.post('http://localhost:3000/api/notes/register', recordData)
-        .then(res => console.log(res.data));
+        if (recordData) {
+            axios.post("http://localhost:3000/api/notes/register", recordData)
+            .then(res => console.log(res.data));
 
-        this.setState({
-            username: '',
-            password: ''
-        }); 
+            //After post of data clear the state of username and password
+            this.setState({
+                username: "",
+                password: ""
+            }); 
+        }else{
+            alert("Something went wrong!!!")
+        }
         
     }
   
