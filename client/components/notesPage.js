@@ -7,21 +7,27 @@ import axios from 'axios';
 //Component imports
 import CreateNote from "./forms/createNoteForm";
 import EditNote from "./forms/editNoteForm";
+import Login from "./forms/loginForm";
 
-//styles
+//Styles
 import "./style.scss";
 
 class Welcome extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
+             
             editButton: false,
+            createButton: false,
+            logOut: false,
             usersId: '47',
             noteId:'',
             users: []
          };
          this.deleteNote = this.deleteNote.bind(this);
          this.editNote = this.editNote.bind(this);
+         this.createNote = this.createNote.bind(this);
+         this.signOut = this.signOut.bind(this);
     }
 
     componentDidMount() {
@@ -33,6 +39,14 @@ class Welcome extends Component {
             .then(res => {
                 this.setState({ users: res.data });
             })
+    }
+
+    createNote(e) {
+        e.preventDefault();
+        //Set new state of to true
+        this.setState({
+            createButton: true
+        });
     }
 
     editNote(e) {
@@ -54,11 +68,10 @@ class Welcome extends Component {
         const userId = this.state.usersId;
         const noteId = this.state.noteId;
 
-        console.log("Get note Id >>>>", noteId);
-
         if(noteId){
             alert("Are you sure you want to delete the note?");
 
+            //Connection to backend api
             axios.delete('http://localhost:3000/api/notes/users/'+userId+'/note/'+noteId)
             .then(res => {
                 this.setState({ users: res.data });
@@ -72,7 +85,22 @@ class Welcome extends Component {
             alert("Something went wrong");
         }
     }
+
+    signOut(e) {
+
+        //Connection to backend api
+        axios.delete('http://localhost:3000/api/notes/users/'+userId+'/logout')
+        .then(res => {
+            this.setState({ users: res.data });
+        })
+        
+        this.setState({
+            logOut: true
+        });
+    }
+
     render() {
+        //Loop through noteItem object to get notes.
         const items= this.state.users.noteItems;
         let getItems = () => {
             const items= this.state.users.noteItems;
@@ -101,11 +129,28 @@ class Welcome extends Component {
             return <Router><Route editButton='/EditNote' component={EditNote}/></Router>
         }
 
+        //Fetch Create New Note form.
+        const createButton = this.state.createButton;
+        if (createButton == true) {
+            return <Router><Route createButton='/CreateNote' component={CreateNote}/></Router>
+        }
+
+        //Redirect back to Login.
+        const logOut = this.state.logOut;
+        if (logOut == true) {
+            return <Router><Route logOut='/Login' component={Login}/></Router>
+        }
         return (
             <div>
+                <div className="logOutBtn-body">
+                    <button className="logOutBtn" onClick={this.signOut}>Sign Out</button>
+                </div>
                 <div className="account-body">
                     <h3>{this.state.users.username} Account</h3>
                      <div className="note-card">
+                        <div className="create-noteBtn-body">
+                            <button className="createBtn" onClick={this.createNote}>Create+</button>
+                        </div>
                         {items && getItems()}
                      </div>
                 </div>

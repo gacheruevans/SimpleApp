@@ -1,7 +1,10 @@
 "use strict"
+//Libs
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import axios from "axios";
 
+//Styles
 import "./style.scss";
 
 class EditNote extends Component {

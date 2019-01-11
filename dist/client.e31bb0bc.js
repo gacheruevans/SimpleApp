@@ -30256,7 +30256,7 @@ var reloadCSS = require('_css_loader');
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
 },{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/forms/createNoteForm.js":[function(require,module,exports) {
-"use strict";
+"use strict"; //Libs
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -30265,9 +30265,13 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _reactRouterDom = require("react-router-dom");
+
 var _axios = _interopRequireDefault(require("axios"));
 
 require("./style.scss");
+
+var _notesPage = _interopRequireDefault(require("../notesPage"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30305,7 +30309,8 @@ function (_Component) {
     _this.state = {
       title: "",
       description: "",
-      userId: "47"
+      userId: "47",
+      toDashBoard: false
     };
     _this.onChangeTitle = _this.onChangeTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onChangeDescription = _this.onChangeDescription.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -30341,12 +30346,13 @@ function (_Component) {
       if (recordData) {
         _axios.default.post("http://localhost:3000/api/notes/users/" + userId + "/note/", recordData).then(function (res) {
           return console.log(res.data);
-        }); //Clears data from states
+        }); //Clears data from states and set redirect state to true
 
 
         this.setState({
           title: "",
-          description: ""
+          description: "",
+          toDashBoard: true
         });
         alert("A new note has been Created successfully!");
       } else {
@@ -30356,6 +30362,16 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
+      //Redirect back to user dashboard after note is created.
+      var toDashBoard = this.state.toDashBoard;
+
+      if (toDashBoard == true) {
+        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+          toDashBoard: "/UserDashboard",
+          component: _notesPage.default
+        }));
+      }
+
       return _react.default.createElement("div", {
         className: "base-form"
       }, _react.default.createElement("form", {
@@ -30401,8 +30417,8 @@ function (_Component) {
 
 var _default = CreateNote;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss"}],"components/forms/editNoteForm.js":[function(require,module,exports) {
-"use strict";
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss","../notesPage":"components/notesPage.js"}],"components/forms/editNoteForm.js":[function(require,module,exports) {
+"use strict"; //Libs
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -30410,6 +30426,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -30544,7 +30562,7 @@ function (_Component) {
 
 var _default = EditNote;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss"}],"components/style.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss"}],"components/style.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30566,6 +30584,8 @@ var _axios = _interopRequireDefault(require("axios"));
 var _createNoteForm = _interopRequireDefault(require("./forms/createNoteForm"));
 
 var _editNoteForm = _interopRequireDefault(require("./forms/editNoteForm"));
+
+var _loginForm = _interopRequireDefault(require("./forms/loginForm"));
 
 require("./style.scss");
 
@@ -30604,12 +30624,16 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Welcome).call(this, props));
     _this.state = {
       editButton: false,
+      createButton: false,
+      logOut: false,
       usersId: '47',
       noteId: '',
       users: []
     };
     _this.deleteNote = _this.deleteNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.editNote = _this.editNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.createNote = _this.createNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.signOut = _this.signOut.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -30629,6 +30653,15 @@ function (_Component) {
         _this2.setState({
           users: res.data
         });
+      });
+    }
+  }, {
+    key: "createNote",
+    value: function createNote(e) {
+      e.preventDefault(); //Set new state of to true
+
+      this.setState({
+        createButton: true
       });
     }
   }, {
@@ -30652,10 +30685,9 @@ function (_Component) {
       });
       var userId = this.state.usersId;
       var noteId = this.state.noteId;
-      console.log("Get note Id >>>>", noteId);
 
       if (noteId) {
-        alert("Are you sure you want to delete the note?");
+        alert("Are you sure you want to delete the note?"); //Connection to backend api
 
         _axios.default.delete('http://localhost:3000/api/notes/users/' + userId + '/note/' + noteId).then(function (res) {
           _this3.setState({
@@ -30672,14 +30704,31 @@ function (_Component) {
       }
     }
   }, {
-    key: "render",
-    value: function render() {
+    key: "signOut",
+    value: function signOut(e) {
       var _this4 = this;
 
+      //Connection to backend api
+      _axios.default.delete('http://localhost:3000/api/notes/users/' + userId + '/logout').then(function (res) {
+        _this4.setState({
+          users: res.data
+        });
+      });
+
+      this.setState({
+        logOut: true
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this5 = this;
+
+      //Loop through noteItem object to get notes.
       var items = this.state.users.noteItems;
 
       var getItems = function getItems() {
-        var items = _this4.state.users.noteItems;
+        var items = _this5.state.users.noteItems;
         return Object.values(items).map(function (x, key) {
           return _react.default.createElement("div", {
             key: key,
@@ -30696,14 +30745,14 @@ function (_Component) {
             type: "submit",
             value: Object.values(x).slice(0, -5),
             className: "editBtn",
-            onClick: _this4.editNote
+            onClick: _this5.editNote
           }, "Edit"), _react.default.createElement("button", {
             type: "submit",
             id: "delete",
             name: "delete",
             value: Object.values(x).slice(0, -5),
             className: "deleteBtn",
-            onClick: _this4.deleteNote
+            onClick: _this5.deleteNote
           }, "Delete"))));
         });
       }; //Checks if edit button state is true, so at to redirect the user edit form
@@ -30716,13 +30765,43 @@ function (_Component) {
           editButton: "/EditNote",
           component: _editNoteForm.default
         }));
+      } //Fetch Create New Note form.
+
+
+      var createButton = this.state.createButton;
+
+      if (createButton == true) {
+        return _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+          createButton: "/CreateNote",
+          component: _createNoteForm.default
+        }));
+      } //Redirect back to Login.
+
+
+      var logOut = this.state.logOut;
+
+      if (logOut == true) {
+        return _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+          logOut: "/Login",
+          component: _loginForm.default
+        }));
       }
 
       return _react.default.createElement("div", null, _react.default.createElement("div", {
+        className: "logOutBtn-body"
+      }, _react.default.createElement("button", {
+        className: "logOutBtn",
+        onClick: this.signOut
+      }, "Sign Out")), _react.default.createElement("div", {
         className: "account-body"
       }, _react.default.createElement("h3", null, this.state.users.username, " Account"), _react.default.createElement("div", {
         className: "note-card"
-      }, items && getItems())));
+      }, _react.default.createElement("div", {
+        className: "create-noteBtn-body"
+      }, _react.default.createElement("button", {
+        className: "createBtn",
+        onClick: this.createNote
+      }, "Create+")), items && getItems())));
     }
   }]);
 
@@ -30731,7 +30810,174 @@ function (_Component) {
 
 var _default = Welcome;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./forms/createNoteForm":"components/forms/createNoteForm.js","./forms/editNoteForm":"components/forms/editNoteForm.js","./style.scss":"components/style.scss"}],"components/forms/loginForm.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./forms/createNoteForm":"components/forms/createNoteForm.js","./forms/editNoteForm":"components/forms/editNoteForm.js","./forms/loginForm":"components/forms/loginForm.js","./style.scss":"components/style.scss"}],"components/forms/registrationForm.js":[function(require,module,exports) {
+"use strict"; //Lib
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _loginForm = _interopRequireDefault(require("./loginForm"));
+
+require("./style.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+var Register =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Register, _Component);
+
+  function Register(props, context) {
+    var _this;
+
+    _classCallCheck(this, Register);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Register).call(this, props, context));
+    _this.state = {
+      username: "",
+      password: "",
+      loginButton: false
+    };
+    _this.onChangeUsername = _this.onChangeUsername.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.onChangePassword = _this.onChangePassword.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.userLogin = _this.userLogin.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.onSubmit = _this.onSubmit.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    return _this;
+  }
+
+  _createClass(Register, [{
+    key: "onChangeUsername",
+    value: function onChangeUsername(e) {
+      this.setState({
+        username: e.target.value
+      });
+    }
+  }, {
+    key: "onChangePassword",
+    value: function onChangePassword(e) {
+      this.setState({
+        password: e.target.value
+      });
+    }
+  }, {
+    key: "userLogin",
+    value: function userLogin(e) {
+      this.setState({
+        loginButton: true
+      });
+    }
+  }, {
+    key: "onSubmit",
+    value: function onSubmit(e) {
+      e.preventDefault();
+      var recordData = {
+        username: this.state.username,
+        password: this.state.password
+      };
+
+      if (recordData) {
+        _axios.default.post("http://localhost:3000/api/notes/register", recordData).then(function (res) {
+          return console.log(res.data);
+        }); //After post of data clear the state of username and password
+
+
+        this.setState({
+          username: "",
+          password: ""
+        });
+      } else {
+        alert("Something went wrong!!!");
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      //Fetch login form.
+      var loginButton = this.state.loginButton;
+
+      if (loginButton == true) {
+        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+          loginButton: "/Login",
+          component: _loginForm.default
+        }));
+      }
+
+      return _react.default.createElement("div", {
+        className: "base-form"
+      }, _react.default.createElement("form", {
+        onSubmit: this.onSubmit
+      }, _react.default.createElement("div", {
+        className: "form-title"
+      }, _react.default.createElement("h3", {
+        className: "my-3"
+      }, " Sign Up Form")), _react.default.createElement("div", {
+        className: "form-body"
+      }, _react.default.createElement("div", {
+        className: "firstfield-rw"
+      }, _react.default.createElement("label", null, "Username"), _react.default.createElement("input", {
+        type: "email",
+        id: "email",
+        name: "email",
+        placeholder: "email",
+        value: this.state.username,
+        onChange: this.onChangeUsername,
+        required: true
+      })), _react.default.createElement("div", {
+        className: "secondfield-rw"
+      }, _react.default.createElement("label", null, "Password"), _react.default.createElement("input", {
+        type: "password",
+        id: "password",
+        name: "password",
+        placeholder: "password",
+        value: this.state.password,
+        onChange: this.onChangePassword,
+        required: true
+      }))), _react.default.createElement("div", {
+        className: "footer"
+      }, _react.default.createElement("button", {
+        type: "submit",
+        className: "registerBtn"
+      }, "Register"))), _react.default.createElement("div", null, _react.default.createElement("button", {
+        className: "loginBtn",
+        onClick: this.userLogin
+      }, "Login")));
+    }
+  }]);
+
+  return Register;
+}(_react.Component);
+
+var _default = Register;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./loginForm":"components/forms/loginForm.js","./style.scss":"components/forms/style.scss"}],"components/forms/loginForm.js":[function(require,module,exports) {
 "use strict"; //libs
 
 Object.defineProperty(exports, "__esModule", {
@@ -30746,6 +30992,8 @@ var _reactRouterDom = require("react-router-dom");
 var _axios = _interopRequireDefault(require("axios"));
 
 var _notesPage = _interopRequireDefault(require("../notesPage"));
+
+var _registrationForm = _interopRequireDefault(require("./registrationForm"));
 
 require("./style.scss");
 
@@ -30785,10 +31033,12 @@ function (_Component) {
     _this.state = {
       username: "",
       password: "",
-      dashBoard: false
+      dashBoard: false,
+      registerButton: false
     };
     _this.onChangeUsername = _this.onChangeUsername.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onChangePassword = _this.onChangePassword.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.registerUser = _this.registerUser.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onSubmit = _this.onSubmit.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
@@ -30805,6 +31055,13 @@ function (_Component) {
     value: function onChangePassword(e) {
       this.setState({
         password: e.target.value
+      });
+    }
+  }, {
+    key: "registerUser",
+    value: function registerUser(e) {
+      this.setState({
+        registerButton: true
       });
     }
   }, {
@@ -30834,17 +31091,27 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      //Checks state of dashboard so at to redirect the user
+      //Checks state of dashboard so at to redirect the user.
       var toDashBoard = this.state.toDashBoard;
 
       if (toDashBoard == true) {
-        return _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
           toDashBoard: "/UserDashboard",
           component: _notesPage.default
         }));
+      } //Fetch registration form.
+
+
+      var registerButton = this.state.registerButton;
+
+      if (registerButton == true) {
+        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+          registerButton: "/Register",
+          component: _registrationForm.default
+        }));
       }
 
-      return _react.default.createElement("div", {
+      return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", {
         className: "content"
       }, _react.default.createElement("div", {
         className: "base-form"
@@ -30864,8 +31131,7 @@ function (_Component) {
         name: "email",
         placeholder: "email",
         value: this.state.username,
-        onChange: this.onChangeUsername,
-        required: true
+        onChange: this.onChangeUsername
       })), _react.default.createElement("div", {
         className: "secondfield-rw"
       }, _react.default.createElement("label", null, "Password"), _react.default.createElement("input", {
@@ -30874,17 +31140,17 @@ function (_Component) {
         name: "password",
         placeholder: "password",
         value: this.state.password,
-        onChange: this.onChangePassword,
-        required: true
+        onChange: this.onChangePassword
       }))), _react.default.createElement("div", {
         className: "footer"
       }, _react.default.createElement("button", {
         type: "submit",
         className: "loginBtn"
-      }, "Login"), _react.default.createElement("a", {
+      }, "Login"))), _react.default.createElement("div", null, _react.default.createElement("button", {
+        type: "submit",
         className: "registerBtn",
-        href: "#"
-      }, "Register")))));
+        onClick: this.registerUser
+      }, "Sign Up")))));
     }
   }]);
 
@@ -30893,7 +31159,7 @@ function (_Component) {
 
 var _default = Login;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","../notesPage":"components/notesPage.js","./style.scss":"components/forms/style.scss"}],"components/base/style.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","../notesPage":"components/notesPage.js","./registrationForm":"components/forms/registrationForm.js","./style.scss":"components/forms/style.scss"}],"components/base/style.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30979,7 +31245,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61584" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49952" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

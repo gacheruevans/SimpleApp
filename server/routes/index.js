@@ -10,6 +10,7 @@ module.exports = (app) => {
 
     app.post('/api/notes/register', authController.register); //register users
     app.post('/api/notes/login', authController.login); //login of users
+    app.post('/api/notes/users/:userId/logout', authController.logout);//logout of users
 
     app.get('/api/notes/users', userController.list); //list all users
     app.get('/api/notes/users/:userId', userController.retrieve); //list a specific user and his/her details

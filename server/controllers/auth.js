@@ -48,6 +48,19 @@ module.exports = {
            });
            res.status(200).send({ auth: true, token: token });
        }); 
+   },
+   logout(req, res) {
+        //Logout user
+        User.logout((err, user) => {
+            if (err) {
+                return res.status(500).send('Error on the server.');
+           }
+           if (!user) {
+                return res.status(404).send('No user found.');
+           }
+           let token = null;
+           res.status(200).send({ auth: false, token: token });
+        });
    }
 
 };

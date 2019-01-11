@@ -90,6 +90,22 @@ h3 {
 .account-body {
   background-color: #ffffff; }
 
+.logOutBtn-body {
+  float: right; }
+
+.logOutBtn {
+  border: 1px solid #ebebeb;
+  border-radius: 1px;
+  color: #8c5ef5;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  bottom: 20px;
+  cursor: pointer; }
+
 .note-card {
   margin: 0 auto;
   position: relative;
@@ -119,6 +135,21 @@ h3 {
   padding: 10px;
   border-bottom: 1px solid #ebebeb;
   font-style: italic; }
+
+.create-noteBtn-body {
+  float: right; }
+
+.createBtn {
+  background-color: #4caf54;
+  border: none;
+  color: white;
+  padding: 14px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 2px;
+  cursor: pointer; }
 
 .editBtn {
   background-color: #4c5eaf;
