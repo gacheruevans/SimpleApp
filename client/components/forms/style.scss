@@ -6,9 +6,8 @@ h3 {
   padding: 20px;
 }
 
-.login-form {
-  background-color: #ffffff;
-  color: black;
+.base-form {
+  background-color: #fdfdfd;
   width: 30%;
   margin: 80px auto;
   padding: 5px;
@@ -29,15 +28,23 @@ input {
   font-size: 16px;
 }
 
-.email-rw {
+.firstfield-rw {
   padding: 2px;
 }
 
-.pass-rw {
+.secondfield-rw {
   padding: 10px;
 }
+.form-title {
+  top: 0;
+  margin: 0;
+  color: #ffffff;
+  background-color: rgb(86, 121, 187);
+}
+
 .form-body {
   text-align: center;
+  color: black;
   margin: 0 auto;
   padding: 10px;
 }
@@ -54,6 +61,7 @@ input {
   margin: 2px 2px;
   cursor: pointer;
 }
+
 .registerBtn {
   background-color: #4c4eaf;
   border: none;

@@ -9,17 +9,61 @@ h3 {
 .account-body {
   background-color: #ffffff;
 }
+
 .note-card {
   margin: 0 auto;
   position: relative;
   font-family: "Eina 03";
-  font-size: 14px;
-  width: 30%;
+  font-size: 20px;
+  width: 70%;
   border: 1px solid #d3d3d3;
   border-radius: 3px;
 }
+
 .list-items {
   background-color: #ffffff;
+  border-bottom: 1px solid #ebebeb;
   color: black;
+  padding: 20px;
+}
+.note-body {
+  background-color: #fff9f4;
+  border-radius: 3px;
+  font-family: "Eina 03";
+  font-size: 18px;
+  padding: 20px;
+}
+.note-row {
   padding: 10px;
+}
+
+.note-title {
+  padding: 10px;
+  border-bottom: 1px solid #ebebeb;
+  font-style: italic;
+}
+.editBtn {
+  background-color: #4c5eaf;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  background-color: #a1211d;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
 }

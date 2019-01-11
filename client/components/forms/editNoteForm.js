@@ -45,16 +45,16 @@ class EditNote extends Component {
   
     render() {
       return (
-          <div className="login-form">
+          <div className="base-form">
             <form onSubmit={this.onSubmit}>
                 <div className="form-title"><h3 className="my-3"> Edit Note Form</h3></div>
 
                 <div className="form-body">
-                    <div className="email-rw">
+                    <div className="firstfield-rw">
                         <label>Title</label>
                         <input type="text" id="title" name="title"  value={this.state.title}  onChange={this.onChangeTitle} required/>
                     </div>
-                    <div className="pass-rw">
+                    <div className="secondfield-rw">
                         <label>Description</label>
                         <input type="text" id="description" name="description"  placeholder="description" value={this.state.description} onChange={this.onChangeDescription} required/>
                     </div>

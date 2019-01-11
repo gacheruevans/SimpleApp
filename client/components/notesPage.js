@@ -24,16 +24,25 @@ class Welcome extends Component {
     }
     render() {
         const items= this.state.users.noteItems;
-        console.log("Items outside!!! >>>>>",items);
-
         let getItems = () => {
             const items= this.state.users.noteItems;
             return Object.values(items).map((x,val) => {
-               return( <div key={x} className="list-items">
-                            { Object.values(x) }
-                            <button type="submit" value={x}>Edit</button>
-                            <button type="submit" value={x} onClick={this.Delete}>Delete</button>
-                        </div>)
+                console.log("values extracted >>>>>", Object.values(x).slice(3,-2));
+               return( 
+                <div key={x} className="list-items">
+                    <div className="note-body">
+                        <div className="note-title">
+                            <div>{Object.values(x).slice(1,-4)}</div>
+                        </div>
+                        <div className="note-row">
+                            <div>{Object.values(x).slice(2,-3)}</div>
+                        </div>
+                        <div className="note-row">
+                            <button type="submit" value={x} className="editBtn">Edit</button>
+                            <button type="submit" value={x} className="deleteBtn" onClick={this.Delete}>Delete</button>
+                        </div>
+                    </div>
+                </div>)
              });
         }
         return (
