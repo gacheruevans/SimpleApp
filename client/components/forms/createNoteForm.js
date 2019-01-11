@@ -63,7 +63,7 @@ class CreateNote extends Component {
                 </div>
                 
                 <div className= "footer">
-                    <button type="submit" className="registerBtn">Edit</button>
+                    <button type="submit" className="registerBtn">Create</button>
                 </div>
             </form>
         </div> 

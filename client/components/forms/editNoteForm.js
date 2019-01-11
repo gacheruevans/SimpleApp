@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "./style.scss";
 
-class CreateNote extends Component {
+class EditNote extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -68,7 +68,7 @@ class CreateNote extends Component {
       );
     }
   }
-  export default CreateNote;
+  export default EditNote;
 
   
 
