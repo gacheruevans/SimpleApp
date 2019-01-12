@@ -1,12 +1,12 @@
 'use strict'
-// Lib imports
+//Lib imports
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 //Config imports
 const config = require('../config/config');
 
-// Model imports
+//Model imports
 const User = require('../models').Users;
 
 

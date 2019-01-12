@@ -1,11 +1,16 @@
 'use strict'
+//Lib import
 const jwt = require('jsonwebtoken');
+
+//Model imports
 const User= require('../models').Users;
 const Notes = require('../models').Notes;
+
+//Config import
 const config = require('../config/config');
 
 module.exports = {
-    //fetch all users - function for an Administrator
+    //Fetch all users by [Decoded token user id] - Administrator Functionality
     list(req, res) {
         let  token = req.headers['x-access-token'];
         if (!token){
@@ -24,7 +29,7 @@ module.exports = {
         });    
     },
 
-    //find notes by user id
+    //Find notes by [Decoded token user id]
     retrieve(req, res) {
         let  token = req.headers['x-access-token'];
         if (!token){
@@ -36,9 +41,9 @@ module.exports = {
             }
 
             if(decoded) {
-            //find notes based on decoded id from generated token string
+            //Find notes based on decoded id from generated token string
              return User
-             .findById(decoded.id, {
+             .findById(decoded.id, { password: 0 }, {
                 include: [{
                     model: Notes,
                     as: 'noteItems'
@@ -56,49 +61,77 @@ module.exports = {
             }
         }); 
     },
-    //update user details
+
+    //Update user details by [Decoded token user id]
     update(req, res) {
-        return User
-        .findById(req.params.userId, {
-            include: [{
-                model: Notes,
-                as: 'noteItems'
-            }],
-        })
-        .then(user => {
-            if(!user) {
-                return res.status(404).send({
-                    message: 'User Not Found'
-                })
+        let  token = req.headers['x-access-token'];
+        if (!token){
+            return res.status(401).send({ auth: false, message: 'No token provided.' });
+        } 
+        jwt.verify(token, config.keySecrete, (err, decoded) => {
+            if (err) {
+                return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
             }
-            return user
-            .update({
-                password: req.body.password || user.password
-            })
-            .then(()=> res.status(200).send(user))
-            .catch(error => res.status(400).send(error));
-        })
-        .catch(error => res.status(400).send(error));
+
+            if(decoded) {
+                //Find note based on decoded id from generated token string             
+                return User
+                .findById(decoded.id, {
+                    include: [{
+                        model: Notes,
+                        as: 'noteItems'
+                    }],
+                })
+                .then(user => {
+                    if(!user) {
+                        return res.status(404).send({
+                            message: 'User Not Found'
+                        })
+                    }
+                    return user
+                    .update({
+                        password: req.body.password || user.password
+                    })
+                    .then(()=> res.status(200).send(user))
+                    .catch(error => res.status(400).send(error));
+                })
+                .catch(error => res.status(400).send(error));
+            }
+        }); 
     },
-    //delete user record and all subsequent notes
+
+    //Delete user record and all subsequent notes - Administrator Functionality
     destroy(req, res) {
-        return User
-        .findById(req.params.userId, {
-            include: [{
-                model: Notes,
-                as: 'noteItems'
-            }]
-        })
-        .then( user => {
-            if(!user) {
-                return res.status(404).send({
-                    message: 'User Not Found'
+        let  token = req.headers['x-access-token'];
+        if (!token){
+            return res.status(401).send({ auth: false, message: 'No token provided.' });
+        } 
+        jwt.verify(token, config.keySecrete, (err, decoded) => {
+            if (err) {
+                return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+            }
+
+            if(decoded) {
+                //find note based on decoded id from generated token string             
+                return User
+                .findById(decoded.id, {
+                    include: [{
+                        model: Notes,
+                        as: 'noteItems'
+                    }]
+                })
+                .then( user => {
+                    if(!user) {
+                        return res.status(404).send({
+                            message: 'User Not Found'
+                        })
+                    }
+                    return user
+                    .destroy()
+                    .then(()=> res.status(204).send())
+                    .catch(error => res.status(400).send(error));
                 })
             }
-            return user
-            .destroy()
-            .then(()=> res.status(204).send())
-            .catch(error => res.status(400).send(error));
-        })
-    }
+        }); 
+    },
 };
