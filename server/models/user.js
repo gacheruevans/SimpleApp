@@ -1,11 +1,13 @@
 'use strict';
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define('Users', {
     username:{
         type: DataTypes.STRING,
         allowNull: false
-    }, 
-    password: {
+    },
+    password: { 
         type: DataTypes.STRING,
         allowNull: false
     }
@@ -16,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.hasMany(models.Notes, {
       foreignKey: 'userId',
       as: 'noteItems'
-    })
+    });
   };
   return Users;
 };

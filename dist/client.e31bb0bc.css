@@ -1,3 +1,202 @@
+h3 {
+  text-align: center;
+  font-weight: 600;
+  margin: 0r auto;
+  font-size: 18px;
+  padding: 20px; }
+
+.base-form {
+  background-color: #fdfdfd;
+  width: 30%;
+  margin: 80px auto;
+  padding: 5px;
+  border: 1px solid #d3d3d3;
+  border-radius: 3px; }
+
+label {
+  right: 20px;
+  padding: 10px;
+  font-size: 18px; }
+
+.description {
+  float: left; }
+
+.textarea-rw {
+  padding: 10px; }
+
+input {
+  margin: 0 auto;
+  padding: 2px;
+  font-size: 16px; }
+
+textarea {
+  padding: 6px;
+  font-size: 16px; }
+
+.firstfield-rw {
+  margin: 0px 0px 0px 10px;
+  padding: 2px; }
+
+.secondfield-rw {
+  margin: 0px 0px 0px 10px;
+  padding: 2px; }
+
+.form-title {
+  top: 0;
+  margin: 0;
+  color: #ffffff;
+  background-color: #5679bb; }
+
+.form-body {
+  text-align: center;
+  color: black;
+  margin: 0 auto;
+  padding: 10px; }
+
+.loginBtn {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+
+.registerBtn {
+  background-color: #4c4eaf;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+
+.footer {
+  text-align: center;
+  margin: 0 auto; }
+h3 {
+  text-align: center;
+  font-weight: 600;
+  margin: 0r auto;
+  font-size: 18px;
+  padding: 20px; }
+
+.account-body {
+  background-color: #ffffff; }
+
+.logOutBtn-body {
+  float: right; }
+
+.logOutBtn {
+  border: 1px solid #ebebeb;
+  border-radius: 1px;
+  color: #8c5ef5;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  bottom: 20px;
+  cursor: pointer; }
+
+.note-card {
+  margin: 0 auto;
+  position: relative;
+  font-family: "Eina 03";
+  font-size: 20px;
+  width: 70%;
+  border: 1px solid #d3d3d3;
+  border-radius: 3px; }
+
+.list-items {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ebebeb;
+  color: black;
+  padding: 20px; }
+
+.note-body {
+  background-color: #fff9f4;
+  border-radius: 3px;
+  font-family: "Eina 03";
+  font-size: 18px;
+  padding: 20px; }
+
+.note-row {
+  padding: 10px; }
+
+.note-title {
+  padding: 10px;
+  border-bottom: 1px solid #ebebeb;
+  font-style: italic; }
+
+.create-noteBtn-body {
+  float: right; }
+
+.createBtn {
+  background-color: #4caf54;
+  border: none;
+  color: white;
+  padding: 14px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 2px;
+  cursor: pointer; }
+
+.editBtn {
+  background-color: #4c5eaf;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+
+.deleteBtn {
+  background-color: #a1211d;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+.top-container {
+  background-color: #f1f1f1;
+  padding: 30px;
+  text-align: center; }
+
+.header {
+  padding: 10px 16px;
+  background: #555;
+  color: #f1f1f1; }
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%; }
+
+.sticky + .content {
+  padding-top: 102px; }
+
+h1 {
+  text-align: center;
+  font-weight: 300;
+  margin-top: 1rem;
+  font-size: 5rem; }
 *,
 *::after,
 *::before {
@@ -9,15 +208,13 @@ html {
   font-size: 62.5%; }
 
 body {
-  background-color: #ecf0f1;
-  color: #d35400;
+  margin: 0;
+  background-color: #ffffff;
+  color: #0067ee;
   font-family: sans-serif;
   font-size: 16px;
   line-height: 1.7rem;
-  padding: 3rem; }
+  height: 1800px; }
 
-h1 {
-  text-align: center;
-  font-weight: 300;
-  margin-top: 5rem;
-  font-size: 6rem; }
+.content {
+  padding: 16px; }

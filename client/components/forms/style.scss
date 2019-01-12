@@ -1,0 +1,90 @@
+h3 {
+  text-align: center;
+  font-weight: 600;
+  margin: 0r auto;
+  font-size: 18px;
+  padding: 20px;
+}
+
+.base-form {
+  background-color: #fdfdfd;
+  width: 30%;
+  margin: 80px auto;
+  padding: 5px;
+  border: 1px solid #d3d3d3;
+  border-radius: 3px;
+}
+
+label {
+  right: 20px;
+  padding: 10px;
+  font-size: 18px;
+}
+.description {
+  float: left;
+}
+.textarea-rw {
+  padding: 10px;
+}
+
+input {
+  margin: 0 auto;
+  padding: 2px;
+  font-size: 16px;
+}
+textarea {
+  padding: 6px;
+  font-size: 16px;
+}
+.firstfield-rw {
+  margin: 0px 0px 0px 10px;
+  padding: 2px;
+}
+
+.secondfield-rw {
+  margin: 0px 0px 0px 10px;
+  padding: 2px;
+}
+.form-title {
+  top: 0;
+  margin: 0;
+  color: #ffffff;
+  background-color: rgb(86, 121, 187);
+}
+
+.form-body {
+  text-align: center;
+  color: black;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.loginBtn {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+
+.registerBtn {
+  background-color: #4c4eaf;
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+.footer {
+  text-align: center;
+  margin: 0 auto;
+}

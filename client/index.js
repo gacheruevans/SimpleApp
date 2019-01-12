@@ -1,12 +1,22 @@
+//Libs
 import React from "react";
-import { render } from "react-dom";
+import ReactDOM from "react-dom";
+
+//Component
+import Login from "./components/forms/loginForm";
+import { Header } from "./components/base/header";
+
+//Styles
 import "./sass/main.scss";
 
-const App = () =>{
+const App = () => {
   return (
     <div>
-      <h1>Simple Application</h1>
+        <Header />
+        <div className="content"> 
+            <Login />
+        </div>
     </div>
   )
 };
-render(<App />, document.getElementById("app"));
+ReactDOM.render(<App />, document.getElementById("app"));

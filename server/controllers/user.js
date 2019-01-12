@@ -1,24 +1,16 @@
 'use strict'
+const jwt = require('jsonwebtoken');
 const User= require('../models').Users;
 const Notes = require('../models').Notes;
 
 module.exports = {
-    //create user
-    create(req, res) {
-        return User
-        .create({
-            username: req.body.username,
-            password: req.body.password
-        })
-        .then(user => res.status(201).send(user))
-        .catch(error => res.status(400).send(error));
-    },
     //fetch all users
     list(req, res) {
+
         return User
         .all()
         .then(user => res.status(200).send(user))
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(400).send(error));    
     },
     //list all notes of every user 
     list(req, res) {
