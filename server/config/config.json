@@ -1,0 +1,18 @@
+{
+  "development": {
+    "username": "gacheru",
+    "password": "254cor3k3",
+    "database": "app",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "gacheru",
+    "password": "254cor3k3",
+    "database": "app-dev",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}
