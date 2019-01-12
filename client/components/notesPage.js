@@ -35,7 +35,7 @@ class Welcome extends Component {
         let header = { 
             headers: {'Content-Type': undefined }
         };
-        axios.get('http://localhost:3000/api/notes/users/'+ userId , header)
+        axios.get('http://localhost:3000/api/notes/users/'+userId , header)
             .then(res => {
                 this.setState({ users: res.data });
             })
