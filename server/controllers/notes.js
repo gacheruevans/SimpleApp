@@ -81,7 +81,7 @@ module.exports = {
                 .find({
                     where: {
                         id: req.params.notesId,
-                        userId: deocoded.id,
+                        userId: decoded.id,
                     },
                 })
                 .then( note => {
