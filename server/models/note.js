@@ -1,20 +1,24 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-
-  const NoteItem = sequelize.define('Note', {
+  const Notes = sequelize.define('Notes', {
     title: {
       type: DataTypes.STRING,
       allowNull: false
     },
     description: {
-      type :DataTypes.TEXT,
+      type: DataTypes.TEXT,
       allowNull: false
     }
   });
 
-  Note.associate = function(models) {
-    // associations can be defined here
+  Notes.associate = (models) => {
+    // Create user model association with notes model. 
+    Notes.belongsTo(models.Users, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
-  return NoteItem;
+
+  return Notes;
 };
