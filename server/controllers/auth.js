@@ -1,10 +1,13 @@
 'use strict'
+// Lib imports
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const config = require('../config/config');
+const config = require('../config/config.json');
+
+// Model imports
 const User = require('../models').Users;
 
-//WIP-Work in progress
+
 module.exports = {
    register(req, res) {
         //Hashing password using bcrypt
@@ -15,26 +18,30 @@ module.exports = {
         })
         .then( user => {
             // Create a token by making a payload and secrete key in config file
-            let token = jwt.sign({id: user._id}, config.secret, {
+            let token = jwt.sign({id: user._id}, config.keySecrete, {
                 expiresIn: 86400 // expires in 24hours
             });
             res.status(200).send({ auth: true, token: token});
             res.status(201).send(user);
+            res.redirect('/api/notes/login');
         })
         .catch(error => res.status(400).send({
             error: 'Something went wrong!'
         }))
    },
    login(req, res) {
-       //Check if user exists
-       User.findOne({username: req.body.username}, (err, user) => {
+       //Check if user exists using username variable holding the posted username data
+       User.find({ where: { username: req.body.username } })
+        .then( (err, user) => {
            if (err) {
                 return res.status(500).send('Error on the server.');
            }
+           //If no user record is found redirect to login page
            if (!user) {
-                return res.status(404).send('No user found.');
+                res.status(404).send('No user found.');
+                res.redirect('/api/notes/login');
            }
-           //Compare whether hashed passwords match 
+           //Compare whether the hashed passwords match 
            let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
            if (!passwordIsValid) {
                return res.status(401).send({
@@ -43,12 +50,14 @@ module.exports = {
                });
            }
 
-           let token = jwt.sign({id: user._id}, config.secret, {
+           let token = jwt.sign({ id: user.id }, config.keySecrete, {
                 expiresIn: 86400 // expires in 24hours
            });
            res.status(200).send({ auth: true, token: token });
+           res.redirect('/api/notes/users/'+user.id);
        }); 
    },
+
    logout(req, res) {
         //Logout user
         User.logout((err, user) => {
@@ -60,6 +69,7 @@ module.exports = {
            }
            let token = null;
            res.status(200).send({ auth: false, token: token });
+           return res.redirect('/api/notes');
         });
    }
 
