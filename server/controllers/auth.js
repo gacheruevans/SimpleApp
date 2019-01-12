@@ -2,7 +2,9 @@
 // Lib imports
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const config = require('../config/config.json');
+
+//Config imports
+const config = require('../config/config');
 
 // Model imports
 const User = require('../models').Users;
@@ -18,12 +20,11 @@ module.exports = {
         })
         .then( user => {
             // Create a token by making a payload and secrete key in config file
-            let token = jwt.sign({id: user._id}, config.keySecrete, {
+            let token = jwt.sign({id: user.id}, config.keySecrete, {
                 expiresIn: 86400 // expires in 24hours
             });
             res.status(200).send({ auth: true, token: token});
             res.status(201).send(user);
-            res.redirect('/api/notes/login');
         })
         .catch(error => res.status(400).send({
             error: 'Something went wrong!'
@@ -31,15 +32,11 @@ module.exports = {
    },
    login(req, res) {
        //Check if user exists using username variable holding the posted username data
-       User.find({ where: { username: req.body.username } })
-        .then( (err, user) => {
-           if (err) {
-                return res.status(500).send('Error on the server.');
-           }
+       User.findOne({ where: { username: req.body.username } })
+        .then( user => {
            //If no user record is found redirect to login page
            if (!user) {
-                res.status(404).send('No user found.');
-                res.redirect('/api/notes/login');
+                return res.status(404).send('No user found.');
            }
            //Compare whether the hashed passwords match 
            let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
@@ -53,11 +50,12 @@ module.exports = {
            let token = jwt.sign({ id: user.id }, config.keySecrete, {
                 expiresIn: 86400 // expires in 24hours
            });
-           res.status(200).send({ auth: true, token: token });
-           res.redirect('/api/notes/users/'+user.id);
-       }); 
+           return res.status(200).send({ auth: true, token: token });
+       })
+       .catch(error => res.status(400).send({
+            error: 'Something went wrong!'
+        }));
    },
-
    logout(req, res) {
         //Logout user
         User.logout((err, user) => {
@@ -68,8 +66,7 @@ module.exports = {
                 return res.status(404).send('No user found.');
            }
            let token = null;
-           res.status(200).send({ auth: false, token: token });
-           return res.redirect('/api/notes');
+           return res.status(200).send({ auth: false, token: token });
         });
    }
 

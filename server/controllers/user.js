@@ -2,46 +2,59 @@
 const jwt = require('jsonwebtoken');
 const User= require('../models').Users;
 const Notes = require('../models').Notes;
+const config = require('../config/config');
 
 module.exports = {
-    //fetch all users
+    //fetch all users - function for an Administrator
     list(req, res) {
+        let  token = req.headers['x-access-token'];
+        if (!token){
+            return res.status(401).send({ auth: false, message: 'No token provided.' });
+        } 
+        jwt.verify(token, config.keySecrete, (err, decoded) => {
+            if (err) {
+                return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+            }
+            if(decoded.id == 0) {
+                return User
+                .all()
+                .then(user => res.status(200).send(user))
+                .catch(error => res.status(400).send(error));
+            }
+        });    
+    },
 
-        return User
-        .all()
-        .then(user => res.status(200).send(user))
-        .catch(error => res.status(400).send(error));    
-    },
-    //list all notes of every user 
-    list(req, res) {
-        return User
-        .findAll({
-            include: [{
-                model: Notes,
-                as: 'noteItems'
-            }],
-        })
-        .then(users => res.status(200).send(users))
-        .catch(error => res.status(200).send(error));
-    },
     //find notes by user id
     retrieve(req, res) {
-        return User
-        .findById(req.params.userId, {
-            include: [{
-                model: Notes,
-                as: 'noteItems'
-            }],
-        })
-        .then(user => {
-            if(!user) {
-                return res.status(404).send({
-                    message: 'User Not Found'
-                });
+        let  token = req.headers['x-access-token'];
+        if (!token){
+            return res.status(401).send({ auth: false, message: 'No token provided.' });
+        } 
+        jwt.verify(token, config.keySecrete, (err, decoded) => {
+            if (err) {
+                return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
             }
-            return res.status(200).send(user)
-        })
-        .catch(error => res.status(400).send(error));
+
+            if(decoded) {
+            //find notes based on decoded id from generated token string
+             return User
+             .findById(decoded.id, {
+                include: [{
+                    model: Notes,
+                    as: 'noteItems'
+                }],
+            })
+            .then(user => {
+                if(!user) {
+                    return res.status(404).send({
+                        message: 'User Not Found'
+                    });
+                }
+                return res.status(200).send(user)
+            })
+            .catch(error => res.status(400).send(error));
+            }
+        }); 
     },
     //update user details
     update(req, res) {
