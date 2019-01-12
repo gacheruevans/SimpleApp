@@ -1,6 +1,7 @@
 'use strict'
 //Lib import
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 //Model imports
 const User= require('../models').Users;
@@ -43,7 +44,7 @@ module.exports = {
             if(decoded) {
             //Find notes based on decoded id from generated token string
              return User
-             .findById(decoded.id, { password: 0 }, {
+             .findById(decoded.id, {
                 include: [{
                     model: Notes,
                     as: 'noteItems'
@@ -88,9 +89,11 @@ module.exports = {
                             message: 'User Not Found'
                         })
                     }
+                    //Hashing new password using bcrypt
+                    const hashedPassword = bcrypt.hashSync(req.body.password, 8);
                     return user
                     .update({
-                        password: req.body.password || user.password
+                        password: hashedPassword || user.password
                     })
                     .then(()=> res.status(200).send(user))
                     .catch(error => res.status(400).send(error));
