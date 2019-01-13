@@ -1,8 +1,8 @@
 'use strict'
 //Libs
 const express = require('express');
-const bodyParser = require('body-parser');
 const logger = require('morgan');
+const bodyParser = require('body-parser');
 
 // Set up express app
 const app = express();
@@ -28,6 +28,7 @@ app.use(cors());
 app.use(logger('dev'));
 
 // Initialize body-parser to parse incoming parameters requests to req.body
+app.use(bodyParser.json());
 app.use( bodyParser.urlencoded({ extended: true,}));
 
 // Require our routes into the application.
