@@ -3,6 +3,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import axios from "axios";
+const jwt = require('jsonwebtoken');
+const config = require('../../../server/config/config');
 
 //Components
 import UserDashboard from '../notesPage';
@@ -15,8 +17,11 @@ class Login extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            username:"",
-            password: "",
+            username:'',
+            password: '',
+            isAuth: false,
+            userId: '',
+            token:'',
             dashBoard: false,
             registerButton: false
         };
@@ -53,27 +58,52 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        
+
         // Checks if data is in recordData object
         if(recordData) {
              axios.post('http://localhost:3000/api/notes/login', recordData)
-            .then(res => console.log(res.data));
-            
-            this.setState({
-                username: "",
-                password:"",
-                toDashBoard: true
-            }); 
+            .then(res => {
+
+                const newAuth = res.data.auth;
+                const newToken = res.data.token;
+
+                const userId = jwt.verify(newToken, config.keySecrete, function(err, decoded) {
+                    if (err) {
+                        return res.status(500).send(
+                            { auth: false, message: 'Failed to authenticate token.' }
+                        );
+                    }
+                    // Send decoded id
+                    return decoded.id;
+                 });
+                 //After post of data clear the state of username and password and set userId with decoded id from token
+                 this.setState({
+                    username: '',
+                    password: '',
+                    toDashBoard: true,
+                    token: newToken,
+                    isAuth: newAuth,
+                    userId: userId
+                }); 
+            });
         }else{
             alert('Incorrect username and password!- retry again!!')
         }
     }
   
     render() {
-        //Checks state of dashboard so at to redirect the user.
+        // Checks state of dashboard so at to redirect the user.
         const toDashBoard = this.state.toDashBoard;
+        const Auth = this.state.isAuth;
+        const userId =  this.state.userId;
+        const currentToken = this.state.token;
+
         if (toDashBoard == true) {
-            return <Router><Route toDashBoard='/UserDashboard' component={UserDashboard}/></Router>
+            return (
+                <Router>    
+                    <Route toDashBoard='/UserDashboard' component={ () => <UserDashboard token={currentToken} Auth={Auth} userId={userId} />} />
+                </Router>
+            );
         }
         //Fetch registration form.
         const registerButton = this.state.registerButton;

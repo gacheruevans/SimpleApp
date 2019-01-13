@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import axios from "axios";
-
 //Components
 import Login from './loginForm';
 
@@ -14,8 +13,10 @@ class Register extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            username:"",
-            password: "",
+            username: '',
+            password: '',
+            token: '',
+            isAuth: false,
             loginButton: false
         };
         this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -48,15 +49,23 @@ class Register extends Component {
             username: this.state.username,
             password: this.state.password
         }
+        console.log("Posted Data >>>>",recordData)
         if (recordData) {
-            axios.post("http://localhost:3000/api/notes/register", recordData)
-            .then(res => console.log(res.data));
+            axios.post('http://localhost:3000/api/notes/register', recordData)
+                .then(res => {
 
-            //After post of data clear the state of username and password
-            this.setState({
-                username: "",
-                password: ""
-            }); 
+                    const newAuth = res.data.auth;
+                    const newToken = res.data.token;
+                    //After post of data clear the state of username and password
+                    this.setState({
+                        username: '',
+                        password: '',
+                        loginButton: true,
+                        isAuth: newAuth,
+                        token: newToken
+                    }); 
+                });
+
         }else{
             alert("Something went wrong!!!")
         }
@@ -66,8 +75,17 @@ class Register extends Component {
     render() {
         //Fetch login form.
         const loginButton = this.state.loginButton;
+
         if (loginButton == true) {
-            return <Router><Route loginButton='/Login' component={Login}/></Router>
+            return (
+                <Router>
+                    <Route 
+                        loginButton='/Login' 
+                        component={Login}
+                        component={<Login/>}
+                    />    
+                </Router>
+            );
         }
         return (
             <div className="base-form">

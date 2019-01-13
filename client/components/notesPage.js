@@ -16,11 +16,12 @@ class Welcome extends Component {
     constructor(props) {
         super(props);
         this.state = {
-             
             editButton: false,
             createButton: false,
             logOut: false,
-            usersId: '47',
+            userId: this.props.userId,
+            passedAuth: this.props.Auth,
+            currentToken: this.props.token,
             noteId:'',
             users: []
          };
@@ -31,14 +32,27 @@ class Welcome extends Component {
     }
 
     componentDidMount() {
-        let userId = this.state.usersId;
-        let header = { 
-            headers: {'Content-Type': undefined }
+        //Fetch user Id from login form after token has been decoded.
+        let userId = this.state.userId;
+        //Fetch tokenHeader that will pass token to api
+        let token = this.state.currentToken;
+        let headers = {
+            'Content-Type': 'application/json',
+            'x-access-token': token 
         };
-        axios.get('http://localhost:3000/api/notes/users/'+userId , header)
+
+        axios.get('http://localhost:3000/api/notes/users/'+userId, {headers: headers})
             .then(res => {
-                this.setState({ users: res.data });
+                //Fetches response data from api and sets it to users object
+                this.setState({ 
+                    users: res.data 
+                });
             })
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        let shouldUpdate = this.props.status !== nextProps.status;
+        return shouldUpdate;
     }
 
     createNote(e) {
@@ -59,13 +73,15 @@ class Welcome extends Component {
 
     deleteNote(e) {
         e.preventDefault();
+        //Get current value fetched from the button
+        let currentId = e.target.value;
 
-        //Get value and set state with new value passed in values attribute in form
+        //Set state with new value passed in values attribute in form
         this.setState({
-            noteId: e.target.value
+            noteId: currentId
         });
 
-        const userId = this.state.usersId;
+        const userId = this.state.userId;
         const noteId = this.state.noteId;
 
         if(noteId){
@@ -74,13 +90,16 @@ class Welcome extends Component {
             //Connection to backend api
             axios.delete('http://localhost:3000/api/notes/users/'+userId+'/note/'+noteId)
             .then(res => {
-                this.setState({ users: res.data });
+
+                let currentNoteId = '';
+                const newUsersData= res.data;
+
+                this.setState({
+                    users: newUsersData,
+                    noteId: currentNoteId
+                });
             })
 
-            //After post of data / deletion of note clear the state of noteId
-            this.setState({
-                noteId: ''
-            }); 
         }else{
             alert("Something went wrong");
         }
@@ -126,13 +145,25 @@ class Welcome extends Component {
         //Checks if edit button state is true, so at to redirect the user edit form
         const editButton = this.state.editButton;
         if (editButton == true) {
-            return <Router><Route editButton='/EditNote' component={EditNote}/></Router>
+            return (
+                <Router>
+                    <Route editButton='/EditNote' component={EditNote}/>
+                </Router>
+            );
         }
 
         //Fetch Create New Note form.
         const createButton = this.state.createButton;
+        const userId = this.state.userId;
+        const Auth = this.state.passedAuth;
+        const currentToken = this.state.currentToken;
+        
         if (createButton == true) {
-            return <Router><Route createButton='/CreateNote' component={CreateNote}/></Router>
+            return (
+                <Router>
+                    <Route createButton='/CreateNote' component={() => <CreateNote currentToken={currentToken} Auth={Auth} userId={userId} />}/>
+                </Router>
+            );
         }
 
         //Redirect back to Login.

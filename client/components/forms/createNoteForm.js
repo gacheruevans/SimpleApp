@@ -16,7 +16,9 @@ class CreateNote extends Component {
         this.state = {
             title: "",
             description: "",
-            userId: "47",
+            userId: this.props.userId,
+            passedAuth: this.props.Auth,
+            currentToken: this.props.currentToken,
             toDashBoard: false
         };
         this.onChangeTitle = this.onChangeTitle.bind(this);
@@ -45,7 +47,14 @@ class CreateNote extends Component {
         }
         //checkes if data is present in the recordData object
         if (recordData) {
-            axios.post("http://localhost:3000/api/notes/users/"+userId+"/note/", recordData)
+            //header that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                'Content-Type': 'application/json',
+                'x-access-token': token 
+            };
+            console.log("Headers >>>>>>", headers)
+            axios.post("http://localhost:3000/api/notes/users/"+userId+"/note/", recordData, {headers: headers})
             .then(res => console.log(res.data));
             
             //Clears data from states and set redirect state to true
@@ -64,8 +73,14 @@ class CreateNote extends Component {
     render() {
         //Redirect back to user dashboard after note is created.
         const toDashBoard = this.state.toDashBoard;
+        const userId = this.state.userId;
+        const Auth = this.state.passedAuth;
         if (toDashBoard == true) {
-            return <Router><Route toDashBoard='/UserDashboard' component={UserDashboard}/></Router>
+            return (
+                <Router>
+                    <Route toDashBoard='/UserDashboard' component={() => <UserDashboard Auth={Auth} userId={userId} />}/>
+                </Router>
+            );
         }
         return (
             <div className="base-form">
