@@ -9,16 +9,19 @@ const config = require('../config/config');
 //Model imports
 const User = require('../models').Users;
 
-
 module.exports = {
    register(req, res) {
         //Hashing password using bcrypt
         const hashedPassword = bcrypt.hashSync(req.body.password, 8);
-        User.create({
+        return User
+        .create({
             username : req.body.username,
             password: hashedPassword
         })
-        .then( user => {
+        .then(user => {
+            if (!user) {
+                return res.status(400).send('No data passed');
+            }
             // Create a token by making a payload and secrete key in config file
             let token = jwt.sign({id: user.id}, config.keySecrete, {
                 expiresIn: 86400 // expires in 24hours
@@ -28,11 +31,12 @@ module.exports = {
         })
         .catch(error => res.status(400).send({
             error: 'Something went wrong!'
-        }))
+        }));
    },
    login(req, res) {
        //Check if user exists using username variable holding the posted username data
-       User.findOne({ where: { username: req.body.username } })
+        return User
+        .findOne({ where: { username: req.body.username } })
         .then( user => {
            //If no user record is found redirect to login page
            if (!user) {
