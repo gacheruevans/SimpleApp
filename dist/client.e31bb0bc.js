@@ -55922,8 +55922,6 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _reactRouterDom = require("react-router-dom");
-
 var _axios = _interopRequireDefault(require("axios"));
 
 require("./style.scss");
@@ -55966,10 +55964,10 @@ function (_Component) {
     _this.state = {
       title: "",
       description: "",
+      close: 'block',
       userId: _this.props.userId,
       passedAuth: _this.props.Auth,
-      currentToken: _this.props.currentToken,
-      toDashBoard: false
+      currentToken: _this.props.currentToken
     };
     _this.onChangeTitle = _this.onChangeTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onChangeDescription = _this.onChangeDescription.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -55994,6 +55992,8 @@ function (_Component) {
   }, {
     key: "onSubmit",
     value: function onSubmit(e) {
+      var _this2 = this;
+
       e.preventDefault();
       var userId = this.state.userId;
       var recordData = {
@@ -56006,23 +56006,22 @@ function (_Component) {
         //header that will pass token to api
         var token = this.state.currentToken;
         var headers = {
-          'Content-Type': 'application/json',
-          'x-access-token': token
+          "Content-Type": "application/json",
+          "x-access-token": token
         };
-        console.log("Headers >>>>>>", headers);
 
         _axios.default.post("http://localhost:3000/api/notes/users/" + userId + "/note/", recordData, {
           headers: headers
         }).then(function (res) {
-          return console.log(res.data);
-        }); //Clears data from states and set redirect state to true
+          console.log(res.data); //Clears some data from states and sets redirect and list update state to true
 
-
-        this.setState({
-          title: "",
-          description: "",
-          toDashBoard: true
+          _this2.setState({
+            title: "",
+            description: "",
+            createNoteStatus: true
+          });
         });
+
         alert("A new note has been Created successfully!");
       } else {
         alert("Something Went wrong!!!");
@@ -56031,36 +56030,34 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      //Redirect back to user dashboard after note is created.
-      var toDashBoard = this.state.toDashBoard;
-      var userId = this.state.userId;
-      var Auth = this.state.passedAuth;
+      var _this3 = this;
 
-      if (toDashBoard == true) {
-        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
-          toDashBoard: "/UserDashboard",
-          component: function component() {
-            return _react.default.createElement(_notesPage.default, {
-              Auth: Auth,
-              userId: userId
-            });
-          }
-        }));
-      }
+      //Props sent back to user dashboard component after note is created.
+      var passProps = function passProps() {
+        //Assign status to variable and pass it to props.
+        var createNoteStatus = _this3.state.createNoteStatus;
+
+        _this3.props.callBackFromListpg(createNoteStatus);
+      };
 
       return _react.default.createElement("div", {
-        className: "base-form"
+        className: "create-base-form"
       }, _react.default.createElement("form", {
         onSubmit: this.onSubmit
       }, _react.default.createElement("div", {
         className: "form-title"
       }, _react.default.createElement("h3", {
         className: "my-3"
-      }, " Create New Note Form")), _react.default.createElement("div", {
-        className: "form-body"
+      }, " Create A New Note")), _react.default.createElement("div", {
+        className: "form-body grid-container"
       }, _react.default.createElement("div", {
-        className: "firstfield-rw"
-      }, _react.default.createElement("label", null, "Title"), _react.default.createElement("input", {
+        className: "grid-item"
+      }, _react.default.createElement("label", {
+        className: "create-label"
+      }, "Title")), _react.default.createElement("div", {
+        className: "grid-item"
+      }, _react.default.createElement("input", {
+        className: "create-input",
         type: "text",
         id: "title",
         name: "title",
@@ -56068,14 +56065,17 @@ function (_Component) {
         onChange: this.onChangeTitle,
         required: true
       })), _react.default.createElement("div", {
-        className: "secondfield-rw"
+        className: "grid-item"
       }, _react.default.createElement("label", {
-        className: "description"
-      }, "Description"), _react.default.createElement("textarea", {
+        className: "create-label"
+      }, "Description")), _react.default.createElement("div", {
+        className: "grid-item"
+      }, _react.default.createElement("textarea", {
+        className: "create-input",
         id: "description",
         name: "description",
-        rows: "4",
-        cols: "50",
+        rows: "2",
+        cols: "40",
         value: this.state.description,
         onChange: this.onChangeDescription,
         required: true
@@ -56093,7 +56093,7 @@ function (_Component) {
 
 var _default = CreateNote;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss","../notesPage":"components/notesPage.js"}],"components/forms/editNoteForm.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss","../notesPage":"components/notesPage.js"}],"components/forms/editNoteForm.js":[function(require,module,exports) {
 "use strict"; //Libs
 
 Object.defineProperty(exports, "__esModule", {
@@ -56299,18 +56299,21 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Welcome).call(this, props));
     _this.state = {
-      editButton: false,
-      createButton: false,
+      showEdit: "none",
+      show: "none",
       logOut: false,
       userId: _this.props.userId,
       passedAuth: _this.props.Auth,
       currentToken: _this.props.token,
-      noteId: '',
+      deleted: true,
+      status: _this.props.createButton,
+      noteId: "",
       users: []
     };
     _this.deleteNote = _this.deleteNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.editNote = _this.editNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.createNote = _this.createNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.closeNoteForm = _this.closeNoteForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.signOut = _this.signOut.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
@@ -56318,6 +56321,22 @@ function (_Component) {
   _createClass(Welcome, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      this.getRecords();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (this.state.deleted == true) {
+        this.getRecords();
+      }
+
+      if (this.props.createButton == false) {
+        this.getRecords();
+      }
+    }
+  }, {
+    key: "getRecords",
+    value: function getRecords() {
       var _this2 = this;
 
       //Fetch user Id from login form after token has been decoded.
@@ -56325,24 +56344,20 @@ function (_Component) {
 
       var token = this.state.currentToken;
       var headers = {
-        'Content-Type': 'application/json',
-        'x-access-token': token
+        "Content-Type": "application/json",
+        "x-access-token": token
       };
 
-      _axios.default.get('http://localhost:3000/api/notes/users/' + userId, {
+      _axios.default.get("http://localhost:3000/api/notes/users/" + userId, {
         headers: headers
       }).then(function (res) {
         //Fetches response data from api and sets it to users object
+        var updatedUsers = res.data; //this.shouldComponentUpdate(updatedUsers);
+
         _this2.setState({
-          users: res.data
+          users: updatedUsers
         });
       });
-    }
-  }, {
-    key: "shouldComponentUpdate",
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      var shouldUpdate = this.props.status !== nextProps.status;
-      return shouldUpdate;
     }
   }, {
     key: "createNote",
@@ -56350,7 +56365,14 @@ function (_Component) {
       e.preventDefault(); //Set new state of to true
 
       this.setState({
-        createButton: true
+        show: "block"
+      });
+    }
+  }, {
+    key: "closeNoteForm",
+    value: function closeNoteForm() {
+      this.setState({
+        show: "none"
       });
     }
   }, {
@@ -56359,7 +56381,7 @@ function (_Component) {
       e.preventDefault(); //Set new state of to true
 
       this.setState({
-        editButton: true
+        showEdit: "block"
       });
     }
   }, {
@@ -56369,26 +56391,29 @@ function (_Component) {
 
       e.preventDefault(); //Get current value fetched from the button
 
-      var currentId = e.target.value; //Set state with new value passed in values attribute in form
-
-      this.setState({
-        noteId: currentId
-      });
+      var fetchedNoteId = e.target.value;
       var userId = this.state.userId;
-      var noteId = this.state.noteId;
 
-      if (noteId) {
-        alert("Are you sure you want to delete the note?"); //Connection to backend api
+      if (fetchedNoteId) {
+        alert("Are you sure you want to delete the note?"); //Fetch tokenHeader that will pass token to api
 
-        _axios.default.delete('http://localhost:3000/api/notes/users/' + userId + '/note/' + noteId).then(function (res) {
-          var currentNoteId = '';
+        var token = this.state.currentToken;
+        var headers = {
+          "Content-Type": "application/json",
+          "x-access-token": token
+        }; //Connection to backend api
+
+        _axios.default.delete("http://localhost:3000/api/notes/users/" + userId + "/note/" + fetchedNoteId, {
+          headers: headers
+        }).then(function (res) {
           var newUsersData = res.data;
 
           _this3.setState({
-            users: newUsersData,
-            noteId: currentNoteId
+            users: newUsersData
           });
         });
+
+        this.componentDidUpdate();
       } else {
         alert("Something went wrong");
       }
@@ -56399,7 +56424,7 @@ function (_Component) {
       var _this4 = this;
 
       //Connection to backend api
-      _axios.default.delete('http://localhost:3000/api/notes/users/' + userId + '/logout').then(function (res) {
+      _axios.default.delete("http://localhost:3000/api/notes/users/" + userId + "/logout").then(function (res) {
         _this4.setState({
           users: res.data
         });
@@ -56455,27 +56480,13 @@ function (_Component) {
           editButton: "/EditNote",
           component: _editNoteForm.default
         }));
-      } //Fetch Create New Note form.
+      } //Props passed to to Create New Note form.
 
 
-      var createButton = this.state.createButton;
+      var show = this.state.show;
       var userId = this.state.userId;
       var Auth = this.state.passedAuth;
-      var currentToken = this.state.currentToken;
-
-      if (createButton == true) {
-        return _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Route, {
-          createButton: "/CreateNote",
-          component: function component() {
-            return _react.default.createElement(_createNoteForm.default, {
-              currentToken: currentToken,
-              Auth: Auth,
-              userId: userId
-            });
-          }
-        }));
-      } //Redirect back to Login.
-
+      var currentToken = this.state.currentToken; //Redirect back to Login.
 
       var logOut = this.state.logOut;
 
@@ -56484,7 +56495,15 @@ function (_Component) {
           logOut: "/Login",
           component: _loginForm.default
         }));
-      }
+      } //Function call data from child component
+
+
+      var getCreatNoteData = function getCreatNoteData() {
+        // Checks whether fetched create note status from child component is true  
+        if (createNoteStatus == true) {
+          _this5.componentDidUpdate();
+        }
+      };
 
       return _react.default.createElement("div", null, _react.default.createElement("div", {
         className: "logOutBtn-body"
@@ -56498,9 +56517,25 @@ function (_Component) {
       }, _react.default.createElement("div", {
         className: "create-noteBtn-body"
       }, _react.default.createElement("button", {
+        type: "submit",
+        className: "cancelBtn",
+        style: {
+          display: show
+        },
+        onClick: this.closeNoteForm
+      }, "Cancel"), _react.default.createElement("button", {
         className: "createBtn",
         onClick: this.createNote
-      }, "Create+")), items && getItems())));
+      }, "Create+")), _react.default.createElement("div", {
+        style: {
+          display: show
+        }
+      }, _react.default.createElement(_createNoteForm.default, {
+        callbackFromNotepg: this.getCreatNoteData,
+        currentToken: currentToken,
+        Auth: Auth,
+        userId: userId
+      })), items && getItems())));
     }
   }]);
 
@@ -56988,7 +57023,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59300" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60787" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
