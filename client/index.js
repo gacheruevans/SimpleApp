@@ -25,10 +25,6 @@ class App extends Component {
       data: []
     };
   }
-  componentDidMount() {
-    this.getinitialApiResponse();
-  }
-
   // componentDidUpdate(userData) {
   //   // Typical usage (don't forget to compare props):
   //   if (this.state.auth !== this.data.auth) {
@@ -40,18 +36,6 @@ class App extends Component {
   //       });
   //   }
   // }
-
-  getinitialApiResponse() {
-    axios.get("http://localhost:3000/api/notes/")
-      .then(res => {
-          console.log("Get initial data", res.data)
-          //Fetches response data from api and sets it to users object
-          const resDataAuth = res.data.auth;
-          this.setState({
-              auth: resDataAuth
-          });
-      });
-  }
 
   getAuthState(userData) {
     if(userData) {

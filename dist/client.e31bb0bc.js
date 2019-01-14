@@ -56448,27 +56448,41 @@ function (_Component) {
   }, {
     key: "signOut",
     value: function signOut(e) {
-      var _this4 = this;
+      //fetch user is from state
+      var userId = this.state.userId;
 
-      //Fetch user id from state
-      var userId = this.state.userId; //Connection to backend api
+      if (userId) {
+        alert("Are you sure you want to Sign out?"); //Fetch tokenHeader that will pass token to api
 
-      _axios.default.post("http://localhost:3000/api/notes/users/" + userId + "/logout").then(function (res) {
-        console.log(res.data);
+        var token = this.state.currentToken;
+        var headers = {
+          "Content-Type": "application/json",
+          "x-access-token": token
+        }; //Fetch user id from state
 
-        _this4.setState({
-          users: res.data
+        var _userId = this.state.userId; //Connection to backend api
+
+        _axios.default.post("http://localhost:3000/api/notes/users/" + _userId + "/logout", {
+          headers: headers
+        }).then(function (res) {
+          console.log(res.data);
+        }); //clear states
+
+
+        this.setState({
+          logOut: true,
+          userId: "",
+          passedAuth: "",
+          currentToken: ""
         });
-      });
-
-      this.setState({
-        logOut: true
-      });
+      } else {
+        alert("no user Id provided went wrong");
+      }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this4 = this;
 
       //Props passed to to Create New Note and Edit forms.
       var show = this.state.show;
@@ -56481,7 +56495,7 @@ function (_Component) {
       var items = this.state.users.noteItems;
 
       var getItems = function getItems() {
-        var items = _this5.state.users.noteItems;
+        var items = _this4.state.users.noteItems;
         return Object.values(items).map(function (x, key) {
           return _react.default.createElement("div", {
             key: key,
@@ -56498,14 +56512,14 @@ function (_Component) {
             type: "submit",
             value: Object.values(x).slice(0, -5),
             className: "editBtn",
-            onClick: _this5.editNote
+            onClick: _this4.editNote
           }, "Edit"), _react.default.createElement("button", {
             type: "submit",
             id: "delete",
             name: "delete",
             value: Object.values(x).slice(0, -5),
             className: "deleteBtn",
-            onClick: _this5.deleteNote
+            onClick: _this4.deleteNote
           }, "Delete"))));
         });
       }; //Redirect back to Login.
@@ -56894,10 +56908,9 @@ function (_Component) {
           var userData = {
             Auth: _this2.state.isAuth,
             userId: _this2.state.userId,
-            currentToken: _this2.state.token // Fetch current auth state after successful loging
+            currentToken: _this2.state.token // Pass userData object to authauthStateCallback props
 
           };
-          console.log("UserData >>>>", userData);
 
           _this2.props.authStateCallback(userData);
         });
@@ -57084,40 +57097,20 @@ function (_Component) {
       data: []
     };
     return _this;
-  }
+  } // componentDidUpdate(userData) {
+  //   // Typical usage (don't forget to compare props):
+  //   if (this.state.auth !== this.data.auth) {
+  //       console.log("UserData >>>>>>>", userData)
+  //       this.setState({
+  //         auth: userData.Auth,
+  //         userId: userData.userId,
+  //         token: userData.Token
+  //       });
+  //   }
+  // }
+
 
   _createClass(App, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this.getinitialApiResponse();
-    } // componentDidUpdate(userData) {
-    //   // Typical usage (don't forget to compare props):
-    //   if (this.state.auth !== this.data.auth) {
-    //       console.log("UserData >>>>>>>", userData)
-    //       this.setState({
-    //         auth: userData.Auth,
-    //         userId: userData.userId,
-    //         token: userData.Token
-    //       });
-    //   }
-    // }
-
-  }, {
-    key: "getinitialApiResponse",
-    value: function getinitialApiResponse() {
-      var _this2 = this;
-
-      _axios.default.get("http://localhost:3000/api/notes/").then(function (res) {
-        console.log("Get initial data", res.data); //Fetches response data from api and sets it to users object
-
-        var resDataAuth = res.data.auth;
-
-        _this2.setState({
-          auth: resDataAuth
-        });
-      });
-    }
-  }, {
     key: "getAuthState",
     value: function getAuthState(userData) {
       if (userData) {
@@ -57132,7 +57125,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       var userId = this.state.userId;
       var token = this.state.token;
@@ -57144,7 +57137,7 @@ function (_Component) {
             toLogin: "/Login",
             component: function component() {
               return _react.default.createElement(_loginForm.default, {
-                authStateCallback: _this3.getAuthState
+                authStateCallback: _this2.getAuthState
               });
             }
           });

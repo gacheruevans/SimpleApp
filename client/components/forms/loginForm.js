@@ -92,8 +92,7 @@ class Login extends Component {
                     userId :  this.state.userId,
                     currentToken : this.state.token
                 }
-                // Fetch current auth state after successful loging
-                console.log("UserData >>>>", userData)
+                // Pass userData object to authauthStateCallback props
                 this.props.authStateCallback(userData);
             });
                 

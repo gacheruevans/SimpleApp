@@ -44,6 +44,7 @@ class Welcome extends Component {
     componentDidUpdate(prevProps, prevState){
        this.getRecords();
     }
+   
     getRecords(){
          //Fetch user Id from login form after token has been decoded.
          let userId = this.props.userId;
@@ -126,18 +127,36 @@ class Welcome extends Component {
     }
 
     signOut(e) {
-        //Fetch user id from state
+
+        //fetch user is from state
         let userId = this.state.userId;
-        //Connection to backend api
-        axios.post("http://localhost:3000/api/notes/users/"+userId+"/logout")
-        .then(res => {
-            console.log(res.data)
-            this.setState({ users: res.data });
-        })
-        
-        this.setState({
-            logOut: true
-        });
+
+        if(userId){
+
+            alert("Are you sure you want to Sign out?");
+            //Fetch tokenHeader that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type" : "application/json",
+                "x-access-token" : token 
+            };
+            //Fetch user id from state
+            let userId = this.state.userId;
+            //Connection to backend api
+            axios.post("http://localhost:3000/api/notes/users/"+userId+"/logout", {headers: headers})
+            .then(res => {
+                console.log(res.data)
+            });
+            //clear states
+            this.setState({ 
+                logOut: true,
+                userId: "",
+                passedAuth: "",
+                currentToken: "", 
+            });
+        }else{
+            alert("no user Id provided went wrong");
+        }
     }
 
     render() {
