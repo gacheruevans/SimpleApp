@@ -62,16 +62,33 @@ module.exports = {
    },
    logout(req, res) {
         //Logout user
-        User.logout((err, user) => {
-            if (err) {
-                return res.status(500).send('Error on the server.');
-           }
+        return User
+        .logout( user => {
+            
            if (!user) {
                 return res.status(404).send('No user found.');
            }
-           let token = null;
-           return res.status(200).send({ auth: false, token: token });
+           
+           let token = req.headers['x-access-token'];
+            if (!token) {
+            res.status(403).send(
+                { auth: false, message: 'No token provided.'}
+            );
+            }
+            jwt.verify(token, config.keySecrete, function(err, decoded) {
+                if (err) {
+                    return res.status(500).send(
+                        { auth: false, message: 'Failed to authenticate token.' }
+                    );
+                }
+                // If everything is good, clear token session ans auth
+                req.userId = decoded.id;
+
+                let token = null;
+                return res.status(200).send({ auth: false, token: token });
+                 
+            });
         });
-   }
+    }
 
 };

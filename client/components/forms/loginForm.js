@@ -22,7 +22,6 @@ class Login extends Component {
             isAuth: false,
             userId: '',
             token:'',
-            authState: this.props.authState,
             dashBoard: false,
             registerButton: false
         };
@@ -65,10 +64,10 @@ class Login extends Component {
              axios.post('http://localhost:3000/api/notes/login', recordData)
             .then(res => {
 
-                const newAuth = res.data.auth;
-                const newToken = res.data.token;
+                let newAuth = res.data.auth;
+                let newToken = res.data.token;
 
-                const userId = jwt.verify(newToken, config.keySecrete, function(err, decoded) {
+                let decodedUserId = jwt.verify(newToken, config.keySecrete, function(err, decoded) {
                     if (err) {
                         return res.status(500).send(
                             { auth: false, message: 'Failed to authenticate token.' }
@@ -82,18 +81,29 @@ class Login extends Component {
                     username: '',
                     password: '',
                     toDashBoard: true,
-                    authState:true,
                     token: newToken,
                     isAuth: newAuth,
-                    userId: userId
+                    userId: decodedUserId
                 }); 
+               
+                //Get new updated data based on successful login
+                const userData = {
+                    Auth : this.state.isAuth,
+                    userId :  this.state.userId,
+                    currentToken : this.state.token
+                }
+                // Fetch current auth state after successful loging
+                console.log("UserData >>>>", userData)
+                this.props.authStateCallback(userData);
             });
+                
         }else{
             alert('Incorrect username and password!- retry again!!')
         }
     }
-  
+
     render() {
+    
         // Checks state of dashboard so at to redirect the user.
         let toDashBoard = this.state.toDashBoard;
        
@@ -101,11 +111,6 @@ class Login extends Component {
         let userId =  this.state.userId;
         let currentToken = this.state.token;
 
-        const getUpdateAuthstate = () => {
-            // Fetch current update Auth state after successful loging
-            let currentAuthState = this.state.authState;
-            this.props.authStateCallback(currentAuthState);
-        }
         if (toDashBoard == true) {
             return (
                 <Router>    
@@ -150,6 +155,3 @@ class Login extends Component {
     }
   }
   export default Login;
-
-  
-

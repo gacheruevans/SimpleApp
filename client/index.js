@@ -2,68 +2,96 @@
 import React,  { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ReactDOM from "react-dom";
-import axios from "axios";
 
 //Component
 import Login from "./components/forms/loginForm";
+import UserDashboard from "./components/notesPage";
 import { Header } from "./components/base/header";
+import axios from "axios";
 
 //Styles
 import "./sass/main.scss";
+import { isUndefined } from "util";
 
 class App extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      userId: "",
+      token: "",
       auth: false,
       toLogin: true,
-      toDashboard: true
+      toDashboard: true,
+      data: []
     };
   }
-
   componentDidMount() {
-    this.getAuth();
+    this.getinitialApiResponse();
   }
 
-  getAuth() {
+  // componentDidUpdate(userData) {
+  //   // Typical usage (don't forget to compare props):
+  //   if (this.state.auth !== this.data.auth) {
+  //       console.log("UserData >>>>>>>", userData)
+  //       this.setState({
+  //         auth: userData.Auth,
+  //         userId: userData.userId,
+  //         token: userData.Token
+  //       });
+  //   }
+  // }
+
+  getinitialApiResponse() {
     axios.get("http://localhost:3000/api/notes/")
       .then(res => {
-          console.log("Auth state after refresh>>>>>" ,res.data.authState)
-          //Fetch auth state
-          const authState = res.data.authState;
-          this.setState({ 
-              auth: authState
+          console.log("Get initial data", res.data)
+          //Fetches response data from api and sets it to users object
+          const resDataAuth = res.data.auth;
+          this.setState({
+              auth: resDataAuth
           });
       });
   }
 
-  updateAuth(newState){
-    //Update auth with new state
-    this.setState({
-      auth: newState
-    });
-  }
-  
-  render() {
-    let authState = this.state.auth;
-    let toLogin = this.state.toLogin;
-    let toDashboard = this.state.toDashboard;
-
-    //Fetch data from child component login,  Child to Parent callback 
-    const getAuthState = (currentAuthState) =>{
-
-        let newState = currentAuthState;
-        //pass current auth state to updateAuth function
-        this.updateAuth(newState);
+  getAuthState(userData) {
+    if(userData) {
+      //this.componentDidUpdate(userData)
+      this.setState({
+        auth: userData.Auth,
+        userId: userData.userId,
+        token: userData.Token
+      });
     }
+  }
+
+  render() {
+
+    let userId = this.state.userId;
+    let token= this.state.token;
+    let authState =  this.state.auth;
+
+    // console.log("UserData after getAuthState is called >>>>>>", userData)
+
+    let displayComponent = () => {
+      if (authState == false) {
+        return (
+          <Route  toLogin='/Login' component={ () => <Login  authStateCallback={this.getAuthState}/> }/> 
+        );
+      }
+
+      if (authState == true) {
+        return (
+          <Route  toDashboard='/UserDashboard' component={ () => <UserDashboard  token={token} Auth={authState} userId={userId} /> } />
+        );
+      }
+    }
+    
     return (
       <div>
         <Header />
         <div className="content"> 
           <Router>
-            {/* handles browser refresh to so as to stay on currently signed/ logged in page */}
-            {authState == false ?  
-            <Route authStateCallback={this.getAuthState} toLogin='/Login' authState={authState} component={Login} /> :  <Route  toDashboard='/Login' component={Login} />}
+            { displayComponent() }
           </Router>
         </div>
       </div>

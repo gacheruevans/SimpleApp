@@ -9,7 +9,7 @@ module.exports = (app) => {
 
     app.get('/api/notes', (req,res) => {
         res.status(200).send({
-            authState: false,
+            auth: false,
             message: 'welcome to Notes Application please login'
         })
     });

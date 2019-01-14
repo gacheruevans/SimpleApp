@@ -56325,6 +56325,7 @@ function (_Component) {
       currentToken: _this.props.token,
       deleted: false,
       status: _this.props.createButton,
+      authState: _this.props.currentAuthState,
       users: [],
       noteId: ""
     };
@@ -56353,24 +56354,27 @@ function (_Component) {
       var _this2 = this;
 
       //Fetch user Id from login form after token has been decoded.
-      var userId = this.state.userId; //Fetch tokenHeader that will pass token to api
+      var userId = this.props.userId;
 
-      var token = this.state.currentToken;
-      var headers = {
-        "Content-Type": "application/json",
-        "x-access-token": token
-      };
+      if (userId) {
+        //Fetch tokenHeader that will pass token to api
+        var token = this.state.currentToken;
+        var headers = {
+          "Content-Type": "application/json",
+          "x-access-token": token
+        };
 
-      _axios.default.get("http://localhost:3000/api/notes/users/" + userId, {
-        headers: headers
-      }).then(function (res) {
-        //Fetches response data from api and sets it to users object
-        var updatedUsers = res.data;
+        _axios.default.get("http://localhost:3000/api/notes/users/" + userId, {
+          headers: headers
+        }).then(function (res) {
+          //Fetches response data from api and sets it to users object
+          var updatedUsers = res.data;
 
-        _this2.setState({
-          users: updatedUsers
+          _this2.setState({
+            users: updatedUsers
+          });
         });
-      });
+      }
     }
   }, {
     key: "createNote",
@@ -56446,8 +56450,12 @@ function (_Component) {
     value: function signOut(e) {
       var _this4 = this;
 
-      //Connection to backend api
-      _axios.default.delete("http://localhost:3000/api/notes/users/" + userId + "/logout").then(function (res) {
+      //Fetch user id from state
+      var userId = this.state.userId; //Connection to backend api
+
+      _axios.default.post("http://localhost:3000/api/notes/users/" + userId + "/logout").then(function (res) {
+        console.log(res.data);
+
         _this4.setState({
           users: res.data
         });
@@ -56814,7 +56822,6 @@ function (_Component) {
       isAuth: false,
       userId: '',
       token: '',
-      authState: _this.props.authState,
       dashBoard: false,
       registerButton: false
     };
@@ -56862,7 +56869,7 @@ function (_Component) {
         _axios.default.post('http://localhost:3000/api/notes/login', recordData).then(function (res) {
           var newAuth = res.data.auth;
           var newToken = res.data.token;
-          var userId = jwt.verify(newToken, config.keySecrete, function (err, decoded) {
+          var decodedUserId = jwt.verify(newToken, config.keySecrete, function (err, decoded) {
             if (err) {
               return res.status(500).send({
                 auth: false,
@@ -56878,11 +56885,21 @@ function (_Component) {
             username: '',
             password: '',
             toDashBoard: true,
-            authState: true,
             token: newToken,
             isAuth: newAuth,
-            userId: userId
-          });
+            userId: decodedUserId
+          }); //Get new updated data based on successful login
+
+
+          var userData = {
+            Auth: _this2.state.isAuth,
+            userId: _this2.state.userId,
+            currentToken: _this2.state.token // Fetch current auth state after successful loging
+
+          };
+          console.log("UserData >>>>", userData);
+
+          _this2.props.authStateCallback(userData);
         });
       } else {
         alert('Incorrect username and password!- retry again!!');
@@ -56891,20 +56908,11 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
-
       // Checks state of dashboard so at to redirect the user.
       var toDashBoard = this.state.toDashBoard;
       var Auth = this.state.isAuth;
       var userId = this.state.userId;
       var currentToken = this.state.token;
-
-      var getUpdateAuthstate = function getUpdateAuthstate() {
-        // Fetch current update Auth state after successful loging
-        var currentAuthState = _this3.state.authState;
-
-        _this3.props.authStateCallback(currentAuthState);
-      };
 
       if (toDashBoard == true) {
         return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
@@ -57022,13 +57030,17 @@ var _reactRouterDom = require("react-router-dom");
 
 var _reactDom = _interopRequireDefault(require("react-dom"));
 
-var _axios = _interopRequireDefault(require("axios"));
-
 var _loginForm = _interopRequireDefault(require("./components/forms/loginForm"));
+
+var _notesPage = _interopRequireDefault(require("./components/notesPage"));
 
 var _header = require("./components/base/header");
 
+var _axios = _interopRequireDefault(require("axios"));
+
 require("./sass/main.scss");
+
+var _util = require("util");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57064,9 +57076,12 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context));
     _this.state = {
+      userId: "",
+      token: "",
       auth: false,
       toLogin: true,
-      toDashboard: true
+      toDashboard: true,
+      data: []
     };
     return _this;
   }
@@ -57074,57 +57089,84 @@ function (_Component) {
   _createClass(App, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.getAuth();
-    }
+      this.getinitialApiResponse();
+    } // componentDidUpdate(userData) {
+    //   // Typical usage (don't forget to compare props):
+    //   if (this.state.auth !== this.data.auth) {
+    //       console.log("UserData >>>>>>>", userData)
+    //       this.setState({
+    //         auth: userData.Auth,
+    //         userId: userData.userId,
+    //         token: userData.Token
+    //       });
+    //   }
+    // }
+
   }, {
-    key: "getAuth",
-    value: function getAuth() {
+    key: "getinitialApiResponse",
+    value: function getinitialApiResponse() {
       var _this2 = this;
 
       _axios.default.get("http://localhost:3000/api/notes/").then(function (res) {
-        console.log("Auth state after refresh>>>>>", res.data.authState); //Fetch auth state
+        console.log("Get initial data", res.data); //Fetches response data from api and sets it to users object
 
-        var authState = res.data.authState;
+        var resDataAuth = res.data.auth;
 
         _this2.setState({
-          auth: authState
+          auth: resDataAuth
         });
       });
     }
   }, {
-    key: "updateAuth",
-    value: function updateAuth(newState) {
-      //Update auth with new state
-      this.setState({
-        auth: newState
-      });
+    key: "getAuthState",
+    value: function getAuthState(userData) {
+      if (userData) {
+        //this.componentDidUpdate(userData)
+        this.setState({
+          auth: userData.Auth,
+          userId: userData.userId,
+          token: userData.Token
+        });
+      }
     }
   }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
-      var authState = this.state.auth;
-      var toLogin = this.state.toLogin;
-      var toDashboard = this.state.toDashboard; //Fetch data from child component login,  Child to Parent callback 
+      var userId = this.state.userId;
+      var token = this.state.token;
+      var authState = this.state.auth; // console.log("UserData after getAuthState is called >>>>>>", userData)
 
-      var getAuthState = function getAuthState(currentAuthState) {
-        var newState = currentAuthState; //pass current auth state to updateAuth function
+      var displayComponent = function displayComponent() {
+        if (authState == false) {
+          return _react.default.createElement(_reactRouterDom.Route, {
+            toLogin: "/Login",
+            component: function component() {
+              return _react.default.createElement(_loginForm.default, {
+                authStateCallback: _this3.getAuthState
+              });
+            }
+          });
+        }
 
-        _this3.updateAuth(newState);
+        if (authState == true) {
+          return _react.default.createElement(_reactRouterDom.Route, {
+            toDashboard: "/UserDashboard",
+            component: function component() {
+              return _react.default.createElement(_notesPage.default, {
+                token: token,
+                Auth: authState,
+                userId: userId
+              });
+            }
+          });
+        }
       };
 
       return _react.default.createElement("div", null, _react.default.createElement(_header.Header, null), _react.default.createElement("div", {
         className: "content"
-      }, _react.default.createElement(_reactRouterDom.BrowserRouter, null, authState == false ? _react.default.createElement(_reactRouterDom.Route, {
-        authStateCallback: this.getAuthState,
-        toLogin: "/Login",
-        authState: authState,
-        component: _loginForm.default
-      }) : _react.default.createElement(_reactRouterDom.Route, {
-        toDashboard: "/Login",
-        component: _loginForm.default
-      }))));
+      }, _react.default.createElement(_reactRouterDom.BrowserRouter, null, displayComponent())));
     }
   }]);
 
@@ -57132,7 +57174,7 @@ function (_Component) {
 }(_react.Component);
 
 _reactDom.default.render(_react.default.createElement(App, null), document.getElementById("app"));
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-dom":"../node_modules/react-dom/index.js","axios":"../node_modules/axios/index.js","./components/forms/loginForm":"components/forms/loginForm.js","./components/base/header":"components/base/header.js","./sass/main.scss":"sass/main.scss"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-dom":"../node_modules/react-dom/index.js","./components/forms/loginForm":"components/forms/loginForm.js","./components/notesPage":"components/notesPage.js","./components/base/header":"components/base/header.js","axios":"../node_modules/axios/index.js","./sass/main.scss":"sass/main.scss","util":"../node_modules/util/util.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

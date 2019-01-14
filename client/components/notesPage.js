@@ -24,6 +24,7 @@ class Welcome extends Component {
             currentToken: this.props.token,
             deleted: false,
             status: this.props.createButton,
+            authState: this.props.currentAuthState,
             users: [],
             noteId: ""
          };
@@ -45,22 +46,24 @@ class Welcome extends Component {
     }
     getRecords(){
          //Fetch user Id from login form after token has been decoded.
-         let userId = this.state.userId;
-         //Fetch tokenHeader that will pass token to api
-         let token = this.state.currentToken;
-         let headers = {
-             "Content-Type" : "application/json",
-             "x-access-token" : token 
-         };
- 
-         axios.get("http://localhost:3000/api/notes/users/"+userId, {headers: headers})
-             .then(res => {
-                 //Fetches response data from api and sets it to users object
-                 const updatedUsers = res.data;
-                 this.setState({ 
-                     users: updatedUsers
-                 });
-             });
+         let userId = this.props.userId;
+        if(userId) {
+            //Fetch tokenHeader that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type" : "application/json",
+                "x-access-token" : token 
+            };
+    
+            axios.get("http://localhost:3000/api/notes/users/"+userId, {headers: headers})
+                .then(res => {
+                    //Fetches response data from api and sets it to users object
+                    const updatedUsers = res.data;
+                    this.setState({ 
+                        users: updatedUsers
+                    });
+                });
+        }
     }
     
     createNote() {
@@ -123,9 +126,12 @@ class Welcome extends Component {
     }
 
     signOut(e) {
+        //Fetch user id from state
+        let userId = this.state.userId;
         //Connection to backend api
-        axios.delete("http://localhost:3000/api/notes/users/"+userId+"/logout")
+        axios.post("http://localhost:3000/api/notes/users/"+userId+"/logout")
         .then(res => {
+            console.log(res.data)
             this.setState({ users: res.data });
         })
         
@@ -169,8 +175,13 @@ class Welcome extends Component {
         
         //Redirect back to Login.
         const logOut = this.state.logOut;
+
         if (logOut == true) {
-            return <Router><Route logOut="/Login" component={Login}/></Router>
+            return (
+                <Router>
+                    <Route logOut="/Login" component={Login}/>
+                </Router>
+            );
         }
 
         return (

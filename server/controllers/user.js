@@ -28,7 +28,7 @@ module.exports = {
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
-           // If everything good, save to request for use in other routes
+           // If everything is good, save to request for use in other routes
            req.userId = decoded.id;
             if(req.userId == 0) {
                 return User
@@ -52,7 +52,7 @@ module.exports = {
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
-           // If everything good, save to request for use in other routes
+           // If everything is good, save to request for use in other routes
            req.userId = decoded.id;
 
             //Find notes by [Decoded token user id]
@@ -94,7 +94,7 @@ module.exports = {
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
-           // If everything good, save to request for use in other routes
+           // If everything is good, save to request for use in other routes
            req.userId = decoded.id;
 
             //Find note based on decoded id from generated token string             
@@ -138,7 +138,7 @@ module.exports = {
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
-           // If everything good, save to request for use in other routes
+           // If everything is good, save to request for use in other routes
            req.userId = decoded.id;
 
             //find note based on decoded id from generated token string             
