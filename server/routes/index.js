@@ -9,8 +9,9 @@ module.exports = (app) => {
 
     app.get('/api/notes', (req,res) => {
         res.status(200).send({
+            authState: false,
             message: 'welcome to Notes Application please login'
-        }) 
+        })
     });
 
     app.post('/api/notes/login', authController.login); //login of users

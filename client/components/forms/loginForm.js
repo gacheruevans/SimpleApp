@@ -22,6 +22,7 @@ class Login extends Component {
             isAuth: false,
             userId: '',
             token:'',
+            authState: this.props.authState,
             dashBoard: false,
             registerButton: false
         };
@@ -81,6 +82,7 @@ class Login extends Component {
                     username: '',
                     password: '',
                     toDashBoard: true,
+                    authState:true,
                     token: newToken,
                     isAuth: newAuth,
                     userId: userId
@@ -93,11 +95,17 @@ class Login extends Component {
   
     render() {
         // Checks state of dashboard so at to redirect the user.
-        const toDashBoard = this.state.toDashBoard;
-        const Auth = this.state.isAuth;
-        const userId =  this.state.userId;
-        const currentToken = this.state.token;
+        let toDashBoard = this.state.toDashBoard;
+       
+        let Auth = this.state.isAuth;
+        let userId =  this.state.userId;
+        let currentToken = this.state.token;
 
+        let getUpdateAuthstate = () => {
+            // Fetch current update Auth state after successful loging
+            let currentAuthState = this.state.authState;
+            this.props.authStateCallback(currentAuthState);
+        }
         if (toDashBoard == true) {
             return (
                 <Router>    

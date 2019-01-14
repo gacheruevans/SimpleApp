@@ -78,8 +78,7 @@ class Welcome extends Component {
     editNote(e) {
          //Get current value fetched from the button
          let fetchedNoteId = e.target.value;
-        //Set new state of to true
-        console.log("edit not clicked", fetchedNoteId)
+        //Set new state of note Id
         this.setState({
             showEdit: "block",
             noteId: fetchedNoteId
