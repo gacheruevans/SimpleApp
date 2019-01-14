@@ -56737,7 +56737,7 @@ function (_Component) {
         className: "registerBtn"
       }, "Register"))), _react.default.createElement("div", {
         className: "login-signup-footer"
-      }, _react.default.createElement("p", null, " Don't have an account? No worries, Just sign up! ", _react.default.createElement("button", {
+      }, _react.default.createElement("p", null, " Have an account? No worries, Just Login! ", _react.default.createElement("button", {
         type: "submit",
         className: "loginBtn",
         onClick: this.userLogin
@@ -56966,7 +56966,7 @@ function (_Component) {
         className: "loginBtn"
       }, "Login"))), _react.default.createElement("div", {
         className: "login-signup-footer"
-      }, _react.default.createElement("p", null, " Have an account? No worries, Just Login! ", _react.default.createElement("button", {
+      }, _react.default.createElement("p", null, " Don't have an account? No worries, Just sign up! ", _react.default.createElement("button", {
         type: "submit",
         className: "registerBtn",
         onClick: this.registerUser
@@ -57077,11 +57077,6 @@ function (_Component) {
       this.getAuth();
     }
   }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      this.updateAuth();
-    }
-  }, {
     key: "getAuth",
     value: function getAuth() {
       var _this2 = this;
@@ -57098,10 +57093,10 @@ function (_Component) {
     }
   }, {
     key: "updateAuth",
-    value: function updateAuth() {
-      //Update auth
+    value: function updateAuth(newState) {
+      //Update auth with new state
       this.setState({
-        auth: currentAuthState
+        auth: newState
       });
     }
   }, {
@@ -57111,11 +57106,12 @@ function (_Component) {
 
       var authState = this.state.auth;
       var toLogin = this.state.toLogin;
-      var toDashboard = this.state.toDashboard; //Fetch data from child component login
+      var toDashboard = this.state.toDashboard; //Fetch data from child component login,  Child to Parent callback 
 
       var getAuthState = function getAuthState(currentAuthState) {
-        //pass current auth state to updateAuth function
-        _this3.updateAuth(currentAuthState);
+        var newState = currentAuthState; //pass current auth state to updateAuth function
+
+        _this3.updateAuth(newState);
       };
 
       return _react.default.createElement("div", null, _react.default.createElement(_header.Header, null), _react.default.createElement("div", {

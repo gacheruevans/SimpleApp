@@ -104,7 +104,7 @@ class Register extends Component {
                     </div>
                 </form>
                 <div className="login-signup-footer">
-                    <p> Don't have an account? No worries, Just sign up! <button type="submit" className="loginBtn" onClick={this.userLogin}>Login</button></p>
+                    <p> Have an account? No worries, Just Login! <button type="submit" className="loginBtn" onClick={this.userLogin}>Login</button></p>
                 </div>
             </div> 
         );

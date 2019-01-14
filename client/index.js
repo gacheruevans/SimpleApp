@@ -25,10 +25,6 @@ class App extends Component {
     this.getAuth();
   }
 
-  componentDidUpdate(){
-    this.updateAuth();
-  }
-  
   getAuth() {
     axios.get("http://localhost:3000/api/notes/")
       .then(res => {
@@ -41,10 +37,10 @@ class App extends Component {
       });
   }
 
-  updateAuth(){
-    //Update auth
+  updateAuth(newState){
+    //Update auth with new state
     this.setState({
-        auth: currentAuthState
+      auth: newState
     });
   }
   
@@ -52,19 +48,22 @@ class App extends Component {
     let authState = this.state.auth;
     let toLogin = this.state.toLogin;
     let toDashboard = this.state.toDashboard;
-    //Fetch data from child component login
-    let getAuthState = (currentAuthState) =>{
+
+    //Fetch data from child component login,  Child to Parent callback 
+    const getAuthState = (currentAuthState) =>{
+
+        let newState = currentAuthState;
         //pass current auth state to updateAuth function
-        this.updateAuth(currentAuthState);
+        this.updateAuth(newState);
     }
     return (
       <div>
         <Header />
         <div className="content"> 
           <Router>
-            {/* handles browser refresh to stay on currently signed in page */}
+            {/* handles browser refresh to so as to stay on currently signed/ logged in page */}
             {authState == false ?  
-            <Route  authStateCallback={this.getAuthState} toLogin='/Login' authState={authState} component={Login} /> :  <Route  toDashboard='/Login' component={Login} />}
+            <Route authStateCallback={this.getAuthState} toLogin='/Login' authState={authState} component={Login} /> :  <Route  toDashboard='/Login' component={Login} />}
           </Router>
         </div>
       </div>

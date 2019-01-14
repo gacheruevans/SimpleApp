@@ -101,7 +101,7 @@ class Login extends Component {
         let userId =  this.state.userId;
         let currentToken = this.state.token;
 
-        let getUpdateAuthstate = () => {
+        const getUpdateAuthstate = () => {
             // Fetch current update Auth state after successful loging
             let currentAuthState = this.state.authState;
             this.props.authStateCallback(currentAuthState);
@@ -143,7 +143,7 @@ class Login extends Component {
                     </div>
                 </form>
                 <div className="login-signup-footer">
-                    <p> Have an account? No worries, Just Login! <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button></p>
+                    <p> Don't have an account? No worries, Just sign up! <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button></p>
                 </div>
             </div>
          );
