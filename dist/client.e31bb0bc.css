@@ -15,11 +15,19 @@ h3 {
 
 .create-base-form {
   background-color: #fdfdfd;
-  width: 50%;
-  margin: 80px auto;
+  width: 99%;
+  margin: 20 auto;
   padding: 5px;
   border: 1px solid #d3d3d3;
   border-radius: 3px; }
+
+.edit-base-form {
+  background-color: #f1f1f1;
+  width: 99%;
+  margin: 20px auto;
+  padding: 5px;
+  border: 1px solid #d3d3d3;
+  border: none; }
 
 .grid-container {
   display: grid;
@@ -41,10 +49,13 @@ label {
 .create-label {
   float: left; }
 
-.textarea-rw {
-  padding: 10px; }
+.edit-label {
+  float: left; }
 
 .create-input {
+  float: left; }
+
+.edit-input {
   float: left; }
 
 input {
@@ -56,17 +67,23 @@ textarea {
   padding: 6px;
   font-size: 16px; }
 
-.div-rw {
-  border: 1px solid green;
-  position: relative;
-  margin: 0px 0px 0px 10px;
-  padding: 2px; }
+.form-create-title {
+  top: 0;
+  margin: 0;
+  color: #ffffff;
+  background-color: #7ebb56; }
 
 .form-title {
   top: 0;
   margin: 0;
   color: #ffffff;
-  background-color: #5679bb; }
+  background-color: #9abeff; }
+
+.form-edit-title {
+  top: 0;
+  margin: 0;
+  color: #ffffff;
+  background-color: #9abeff; }
 
 .form-body {
   text-align: center;
@@ -74,16 +91,16 @@ textarea {
   margin: 0 auto;
   padding: 10px; }
 
-.loginBtn {
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 10px 27px;
+.edit-cancelBtn {
+  background-color: #e2e2e2e1;
+  border-radius: 300px;
+  color: red;
+  padding: 6px 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 2px 2px;
+  font-size: 14px;
+  margin: 10px 10px;
   cursor: pointer; }
 
 .cancelBtn {
@@ -98,11 +115,23 @@ textarea {
   margin: 0px 2px;
   cursor: pointer; }
 
+.loginBtn {
+  background-color: transparent;
+  border-radius: 3px;
+  color: #4caf50;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 2px;
+  cursor: pointer; }
+
 .registerBtn {
-  background-color: #4c4eaf;
-  border: none;
-  color: white;
-  padding: 10px 27px;
+  background-color: transparent;
+  border-radius: 3px;
+  color: #4c4eaf;
+  padding: 10px 15px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -116,6 +145,10 @@ textarea {
 
 .cancel-footer {
   text-align: right;
+  margin: 0 auto; }
+
+.login-signup-footer {
+  text-align: center;
   margin: 0 auto; }
 h3 {
   text-align: center;
@@ -152,6 +185,9 @@ h3 {
   border: 1px solid #d3d3d3;
   border-radius: 3px; }
 
+.note-inner-body {
+  margin: 60px auto; }
+
 .list-items {
   background-color: #ffffff;
   border-bottom: 1px solid #ebebeb;
@@ -159,7 +195,7 @@ h3 {
   padding: 20px; }
 
 .note-body {
-  background-color: #fff9f4;
+  background-color: #fdf9f6;
   border-radius: 3px;
   font-family: "Eina 03";
   font-size: 18px;
@@ -173,7 +209,7 @@ h3 {
   border-bottom: 1px solid #ebebeb;
   font-style: italic; }
 
-.create-noteBtn-body {
+.create-edit-noteBtn-body {
   position: relative;
   display: inline-flex;
   float: right; }

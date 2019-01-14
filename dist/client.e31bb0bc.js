@@ -55967,7 +55967,8 @@ function (_Component) {
       close: 'block',
       userId: _this.props.userId,
       passedAuth: _this.props.Auth,
-      currentToken: _this.props.currentToken
+      currentToken: _this.props.currentToken,
+      reRender: _this.props.reRenderRecords
     };
     _this.onChangeTitle = _this.onChangeTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onChangeDescription = _this.onChangeDescription.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -55998,7 +55999,7 @@ function (_Component) {
       var userId = this.state.userId;
       var recordData = {
         title: this.state.title,
-        description: this.state.description //checkes if data is present in the recordData object
+        description: this.state.description //Checkes if form data is present in the recordData object
 
       };
 
@@ -56023,6 +56024,7 @@ function (_Component) {
         });
 
         alert("A new note has been Created successfully!");
+        this.props.reRenderRecords;
       } else {
         alert("Something Went wrong!!!");
       }
@@ -56030,22 +56032,12 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
-
-      //Props sent back to user dashboard component after note is created.
-      var passProps = function passProps() {
-        //Assign status to variable and pass it to props.
-        var createNoteStatus = _this3.state.createNoteStatus;
-
-        _this3.props.callBackFromListpg(createNoteStatus);
-      };
-
       return _react.default.createElement("div", {
         className: "create-base-form"
       }, _react.default.createElement("form", {
         onSubmit: this.onSubmit
       }, _react.default.createElement("div", {
-        className: "form-title"
+        className: "form-create-title"
       }, _react.default.createElement("h3", {
         className: "my-3"
       }, " Create A New Note")), _react.default.createElement("div", {
@@ -56103,8 +56095,6 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _reactRouterDom = require("react-router-dom");
-
 var _axios = _interopRequireDefault(require("axios"));
 
 require("./style.scss");
@@ -56143,10 +56133,12 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditNote).call(this, props, context));
     _this.state = {
-      title: props.title,
-      description: props.description,
-      userId: props.userId,
-      noteId: props.noteId
+      title: _this.props.title,
+      description: _this.props.description,
+      userId: _this.props.userId,
+      passedAuth: _this.props.Auth,
+      currentToken: _this.props.currentToken,
+      reRender: _this.props.reRenderRecords
     };
     _this.onChangeTitle = _this.onChangeTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onChangeDescription = _this.onChangeDescription.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -56171,9 +56163,12 @@ function (_Component) {
   }, {
     key: "onSubmit",
     value: function onSubmit(e) {
-      e.preventDefault();
+      var _this2 = this;
+
+      e.preventDefault(); //Fetch  user & note ids fetched from the state
+
       var userId = this.state.userId;
-      var noteID = this.state.noteId;
+      var fetchedNoteId = this.props.noteId;
       var recordData = {
         title: this.state.title,
         description: this.state.description //Checks whether there is data in the recordData object
@@ -56181,11 +56176,26 @@ function (_Component) {
       };
 
       if (recordData) {
-        _axios.default.put("http://localhost:3000/api/notes/users/" + userId + "/note/" + noteID, recordData).then(function (res) {
-          return console.log(res.data);
+        //Header that will pass token to api
+        var token = this.state.currentToken;
+        var headers = {
+          "Content-Type": "application/json",
+          "x-access-token": token
+        };
+
+        _axios.default.put("http://localhost:3000/api/notes/users/" + userId + "/note/" + fetchedNoteId, recordData, {
+          headers: headers
+        }).then(function (res) {
+          console.log(res.data); //Clears data from states
+
+          _this2.setState({
+            title: "",
+            description: ""
+          });
         });
 
         alert("Note has been Edited successfully!");
+        this.props.reRenderRecords;
       } else {
         alert("Something went wrong!!!");
       }
@@ -56194,18 +56204,23 @@ function (_Component) {
     key: "render",
     value: function render() {
       return _react.default.createElement("div", {
-        className: "base-form"
+        className: "edit-base-form"
       }, _react.default.createElement("form", {
         onSubmit: this.onSubmit
       }, _react.default.createElement("div", {
-        className: "form-title"
+        className: "form-edit-title"
       }, _react.default.createElement("h3", {
         className: "my-3"
-      }, " Edit Note Form")), _react.default.createElement("div", {
-        className: "form-body"
+      }, " Edit Note")), _react.default.createElement("div", {
+        className: "form-body grid-container"
       }, _react.default.createElement("div", {
-        className: "firstfield-rw"
-      }, _react.default.createElement("label", null, "Title"), _react.default.createElement("input", {
+        className: "grid-item"
+      }, _react.default.createElement("label", {
+        className: "edit-label"
+      }, "Title")), _react.default.createElement("div", {
+        className: "grid-item"
+      }, _react.default.createElement("input", {
+        className: "edit-input",
         type: "text",
         id: "title",
         name: "title",
@@ -56213,14 +56228,17 @@ function (_Component) {
         onChange: this.onChangeTitle,
         required: true
       })), _react.default.createElement("div", {
-        className: "secondfield-rw"
+        className: "grid-item"
       }, _react.default.createElement("label", {
-        className: "description"
-      }, "Description"), _react.default.createElement("textarea", {
+        className: "edit-label"
+      }, "Description")), _react.default.createElement("div", {
+        className: "grid-item"
+      }, _react.default.createElement("textarea", {
+        className: "edit-input",
         id: "description",
         name: "description",
-        rows: "4",
-        cols: "50",
+        rows: "2",
+        cols: "40",
         value: this.state.description,
         onChange: this.onChangeDescription,
         required: true
@@ -56229,7 +56247,7 @@ function (_Component) {
       }, _react.default.createElement("button", {
         type: "submit",
         className: "registerBtn"
-      }, "Edit"))));
+      }, "Update"))));
     }
   }]);
 
@@ -56238,7 +56256,7 @@ function (_Component) {
 
 var _default = EditNote;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss"}],"components/style.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","./style.scss":"components/forms/style.scss"}],"components/style.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -56299,21 +56317,22 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Welcome).call(this, props));
     _this.state = {
-      showEdit: "none",
       show: "none",
+      showEdit: "none",
       logOut: false,
       userId: _this.props.userId,
       passedAuth: _this.props.Auth,
       currentToken: _this.props.token,
-      deleted: true,
+      deleted: false,
       status: _this.props.createButton,
-      noteId: "",
-      users: []
+      users: [],
+      noteId: ""
     };
     _this.deleteNote = _this.deleteNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.editNote = _this.editNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.createNote = _this.createNote.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.closeNoteForm = _this.closeNoteForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.closeEditForm = _this.closeEditForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.signOut = _this.signOut.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
@@ -56326,13 +56345,7 @@ function (_Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps, prevState) {
-      if (this.state.deleted == true) {
-        this.getRecords();
-      }
-
-      if (this.props.createButton == false) {
-        this.getRecords();
-      }
+      this.getRecords();
     }
   }, {
     key: "getRecords",
@@ -56352,7 +56365,7 @@ function (_Component) {
         headers: headers
       }).then(function (res) {
         //Fetches response data from api and sets it to users object
-        var updatedUsers = res.data; //this.shouldComponentUpdate(updatedUsers);
+        var updatedUsers = res.data;
 
         _this2.setState({
           users: updatedUsers
@@ -56361,9 +56374,8 @@ function (_Component) {
     }
   }, {
     key: "createNote",
-    value: function createNote(e) {
-      e.preventDefault(); //Set new state of to true
-
+    value: function createNote() {
+      //Set new state of to true
       this.setState({
         show: "block"
       });
@@ -56378,10 +56390,21 @@ function (_Component) {
   }, {
     key: "editNote",
     value: function editNote(e) {
-      e.preventDefault(); //Set new state of to true
+      //Get current value fetched from the button
+      var fetchedNoteId = e.target.value; //Set new state of to true
 
+      console.log("edit not clicked", fetchedNoteId);
       this.setState({
-        showEdit: "block"
+        showEdit: "block",
+        noteId: fetchedNoteId
+      });
+    }
+  }, {
+    key: "closeEditForm",
+    value: function closeEditForm() {
+      this.setState({
+        showEdit: "none",
+        noteId: ""
       });
     }
   }, {
@@ -56409,7 +56432,8 @@ function (_Component) {
           var newUsersData = res.data;
 
           _this3.setState({
-            users: newUsersData
+            users: newUsersData,
+            deleted: true
           });
         });
 
@@ -56439,7 +56463,14 @@ function (_Component) {
     value: function render() {
       var _this5 = this;
 
-      //Loop through noteItem object to get notes.
+      //Props passed to to Create New Note and Edit forms.
+      var show = this.state.show;
+      var showEdit = this.state.showEdit;
+      var userId = this.state.userId;
+      var Auth = this.state.passedAuth;
+      var noteId = this.state.noteId;
+      var currentToken = this.state.currentToken; //Loop through noteItem object to get notes.
+
       var items = this.state.users.noteItems;
 
       var getItems = function getItems() {
@@ -56470,23 +56501,8 @@ function (_Component) {
             onClick: _this5.deleteNote
           }, "Delete"))));
         });
-      }; //Checks if edit button state is true, so at to redirect the user edit form
+      }; //Redirect back to Login.
 
-
-      var editButton = this.state.editButton;
-
-      if (editButton == true) {
-        return _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Route, {
-          editButton: "/EditNote",
-          component: _editNoteForm.default
-        }));
-      } //Props passed to to Create New Note form.
-
-
-      var show = this.state.show;
-      var userId = this.state.userId;
-      var Auth = this.state.passedAuth;
-      var currentToken = this.state.currentToken; //Redirect back to Login.
 
       var logOut = this.state.logOut;
 
@@ -56495,15 +56511,7 @@ function (_Component) {
           logOut: "/Login",
           component: _loginForm.default
         }));
-      } //Function call data from child component
-
-
-      var getCreatNoteData = function getCreatNoteData() {
-        // Checks whether fetched create note status from child component is true  
-        if (createNoteStatus == true) {
-          _this5.componentDidUpdate();
-        }
-      };
+      }
 
       return _react.default.createElement("div", null, _react.default.createElement("div", {
         className: "logOutBtn-body"
@@ -56515,7 +56523,7 @@ function (_Component) {
       }, _react.default.createElement("h3", null, this.state.users.username, " Account"), _react.default.createElement("div", {
         className: "note-card"
       }, _react.default.createElement("div", {
-        className: "create-noteBtn-body"
+        className: "create-edit-noteBtn-body"
       }, _react.default.createElement("button", {
         type: "submit",
         className: "cancelBtn",
@@ -56527,15 +56535,36 @@ function (_Component) {
         className: "createBtn",
         onClick: this.createNote
       }, "Create+")), _react.default.createElement("div", {
+        className: "note-inner-body"
+      }, _react.default.createElement("div", {
+        style: {
+          display: showEdit
+        }
+      }, _react.default.createElement("div", {
+        className: "create-edit-noteBtn-body"
+      }, _react.default.createElement("button", {
+        type: "submit",
+        className: "edit-cancelBtn",
+        style: {
+          display: showEdit
+        },
+        onClick: this.closeEditForm
+      }, "x")), _react.default.createElement(_editNoteForm.default, {
+        reRenderRecords: this.componentDidUpdate,
+        currentToken: currentToken,
+        noteId: noteId,
+        Auth: Auth,
+        userId: userId
+      })), _react.default.createElement("div", {
         style: {
           display: show
         }
       }, _react.default.createElement(_createNoteForm.default, {
-        callbackFromNotepg: this.getCreatNoteData,
+        reRenderRecords: this.componentDidUpdate,
         currentToken: currentToken,
         Auth: Auth,
         userId: userId
-      })), items && getItems())));
+      })), items && getItems()))));
     }
   }]);
 
@@ -56567,8 +56596,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -56668,10 +56695,10 @@ function (_Component) {
       var loginButton = this.state.loginButton;
 
       if (loginButton == true) {
-        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, _defineProperty({
+        return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
           loginButton: "/Login",
           component: _loginForm.default
-        }, "component", _react.default.createElement(_loginForm.default, null))));
+        }));
       }
 
       return _react.default.createElement("div", {
@@ -56709,10 +56736,13 @@ function (_Component) {
       }, _react.default.createElement("button", {
         type: "submit",
         className: "registerBtn"
-      }, "Register"))), _react.default.createElement("div", null, _react.default.createElement("button", {
+      }, "Register"))), _react.default.createElement("div", {
+        className: "login-signup-footer"
+      }, _react.default.createElement("p", null, " Don't have an account? No worries, Just sign up! ", _react.default.createElement("button", {
+        type: "submit",
         className: "loginBtn",
         onClick: this.userLogin
-      }, "Login")));
+      }, "Login"))));
     }
   }]);
 
@@ -56889,9 +56919,7 @@ function (_Component) {
         }));
       }
 
-      return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", {
-        className: "content"
-      }, _react.default.createElement("div", {
+      return _react.default.createElement("div", {
         className: "base-form"
       }, _react.default.createElement("form", {
         onSubmit: this.onSubmit
@@ -56909,7 +56937,8 @@ function (_Component) {
         name: "email",
         placeholder: "email",
         value: this.state.username,
-        onChange: this.onChangeUsername
+        onChange: this.onChangeUsername,
+        required: true
       })), _react.default.createElement("div", {
         className: "secondfield-rw"
       }, _react.default.createElement("label", null, "Password"), _react.default.createElement("input", {
@@ -56918,17 +56947,20 @@ function (_Component) {
         name: "password",
         placeholder: "password",
         value: this.state.password,
-        onChange: this.onChangePassword
+        onChange: this.onChangePassword,
+        required: true
       }))), _react.default.createElement("div", {
         className: "footer"
       }, _react.default.createElement("button", {
         type: "submit",
         className: "loginBtn"
-      }, "Login"))), _react.default.createElement("div", null, _react.default.createElement("button", {
+      }, "Login"))), _react.default.createElement("div", {
+        className: "login-signup-footer"
+      }, _react.default.createElement("p", null, " Have an account? No worries, Just Login! ", _react.default.createElement("button", {
         type: "submit",
         className: "registerBtn",
         onClick: this.registerUser
-      }, "Sign Up")))));
+      }, "Sign Up"))));
     }
   }]);
 
@@ -57023,7 +57055,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60787" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54504" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

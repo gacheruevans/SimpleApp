@@ -79,11 +79,7 @@ class Register extends Component {
         if (loginButton == true) {
             return (
                 <Router>
-                    <Route 
-                        loginButton='/Login' 
-                        component={Login}
-                        component={<Login/>}
-                    />    
+                    <Route loginButton='/Login' component={Login}/>    
                 </Router>
             );
         }
@@ -107,8 +103,8 @@ class Register extends Component {
                         <button type="submit" className="registerBtn">Register</button>
                     </div>
                 </form>
-                <div>
-                    <button className="loginBtn" onClick={this.userLogin} >Login</button>
+                <div className="login-signup-footer">
+                    <p> Don't have an account? No worries, Just sign up! <button type="submit" className="loginBtn" onClick={this.userLogin}>Login</button></p>
                 </div>
             </div> 
         );

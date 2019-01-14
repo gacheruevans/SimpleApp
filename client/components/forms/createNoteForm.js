@@ -18,7 +18,8 @@ class CreateNote extends Component {
             close: 'block',
             userId: this.props.userId,
             passedAuth: this.props.Auth,
-            currentToken: this.props.currentToken
+            currentToken: this.props.currentToken,
+            reRender: this.props.reRenderRecords
         };
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
@@ -46,7 +47,7 @@ class CreateNote extends Component {
             title: this.state.title,
             description: this.state.description
         }
-        //checkes if data is present in the recordData object
+        //Checkes if form data is present in the recordData object
         if (recordData) {
             //header that will pass token to api
             let token = this.state.currentToken;
@@ -65,26 +66,18 @@ class CreateNote extends Component {
                     createNoteStatus: true
                 }); 
             });
-
             alert("A new note has been Created successfully!");
+            this.props.reRenderRecords;
         }else{
             alert("Something Went wrong!!!");
         }
     }
   
     render() {
-        //Props sent back to user dashboard component after note is created.
-        
-        const passProps = () => { 
-            //Assign status to variable and pass it to props.
-            let createNoteStatus = this.state.createNoteStatus;
-            this.props.callBackFromListpg(createNoteStatus);
-        }
-
         return (
             <div className="create-base-form">
                 <form onSubmit={this.onSubmit}>
-                    <div className="form-title"><h3 className="my-3"> Create A New Note</h3></div>
+                    <div className="form-create-title"><h3 className="my-3"> Create A New Note</h3></div>
 
                     <div className="form-body grid-container">
                         <div className="grid-item">

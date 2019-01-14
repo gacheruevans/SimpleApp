@@ -16,22 +16,23 @@ class Welcome extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEdit: "none",
             show: "none",
+            showEdit: "none",
             logOut: false,
             userId: this.props.userId,
             passedAuth: this.props.Auth,
             currentToken: this.props.token,
-            deleted: true,
+            deleted: false,
             status: this.props.createButton,
-            noteId: "",
-            users: []
+            users: [],
+            noteId: ""
          };
 
          this.deleteNote = this.deleteNote.bind(this);
          this.editNote = this.editNote.bind(this);
          this.createNote = this.createNote.bind(this);
          this.closeNoteForm = this.closeNoteForm.bind(this);
+         this.closeEditForm = this.closeEditForm.bind(this);
          this.signOut = this.signOut.bind(this);
     }
 
@@ -40,12 +41,7 @@ class Welcome extends Component {
     }
 
     componentDidUpdate(prevProps, prevState){
-        if (this.state.deleted == true) {
-            this.getRecords();
-        }
-        if (this.props.createButton == false) {
-            this.getRecords();
-        }
+       this.getRecords();
     }
     getRecords(){
          //Fetch user Id from login form after token has been decoded.
@@ -61,32 +57,38 @@ class Welcome extends Component {
              .then(res => {
                  //Fetches response data from api and sets it to users object
                  const updatedUsers = res.data;
- 
-                 //this.shouldComponentUpdate(updatedUsers);
- 
                  this.setState({ 
                      users: updatedUsers
                  });
              });
     }
     
-    createNote(e) {
-        e.preventDefault();
+    createNote() {
         //Set new state of to true
         this.setState({
             show: "block"
         });
     }
-    closeNoteForm(){
+    closeNoteForm() {
         this.setState({
             show: "none"
         });
     }
+
     editNote(e) {
-        e.preventDefault();
+         //Get current value fetched from the button
+         let fetchedNoteId = e.target.value;
         //Set new state of to true
+        console.log("edit not clicked", fetchedNoteId)
         this.setState({
-            showEdit: "block"
+            showEdit: "block",
+            noteId: fetchedNoteId
+        });
+    }
+    closeEditForm() {
+        this.setState({
+            showEdit: "none",
+            noteId: ""
         });
     }
 
@@ -110,7 +112,8 @@ class Welcome extends Component {
             .then(res => {
                 const newUsersData= res.data;
                 this.setState({
-                    users: newUsersData
+                    users: newUsersData,
+                    deleted: true
                 });
             })
             this.componentDidUpdate();
@@ -121,7 +124,6 @@ class Welcome extends Component {
     }
 
     signOut(e) {
-
         //Connection to backend api
         axios.delete("http://localhost:3000/api/notes/users/"+userId+"/logout")
         .then(res => {
@@ -134,6 +136,15 @@ class Welcome extends Component {
     }
 
     render() {
+
+        //Props passed to to Create New Note and Edit forms.
+        let show = this.state.show;
+        let showEdit = this.state.showEdit;
+        let userId = this.state.userId;
+        let Auth = this.state.passedAuth;
+        let noteId = this.state.noteId;
+        let currentToken = this.state.currentToken;
+
         //Loop through noteItem object to get notes.
         const items= this.state.users.noteItems;
         let getItems = () => {
@@ -156,35 +167,11 @@ class Welcome extends Component {
                 </div>)
              });
         }
-
-        //Checks if edit button state is true, so at to redirect the user edit form
-        const editButton = this.state.editButton;
-        if (editButton == true) {
-            return (
-                <Router>
-                    <Route editButton="/EditNote" component={EditNote}/>
-                </Router>
-            );
-        }
-
-        //Props passed to to Create New Note form.
-        const show = this.state.show;
-        const userId = this.state.userId;
-        const Auth = this.state.passedAuth;
-        const currentToken = this.state.currentToken;
         
-
         //Redirect back to Login.
         const logOut = this.state.logOut;
         if (logOut == true) {
             return <Router><Route logOut="/Login" component={Login}/></Router>
-        }
-        //Function call data from child component
-        const getCreatNoteData = () => { 
-            // Checks whether fetched create note status from child component is true  
-            if(createNoteStatus == true){
-                this.componentDidUpdate();
-            }
         }
 
         return (
@@ -195,14 +182,22 @@ class Welcome extends Component {
                 <div className="account-body">
                     <h3>{this.state.users.username} Account</h3>
                      <div className="note-card">
-                        <div className="create-noteBtn-body">
+                        <div className="create-edit-noteBtn-body">
                             <button type="submit" className="cancelBtn" style={{display: show}} onClick={this.closeNoteForm}>Cancel</button>
                             <button className="createBtn" onClick={this.createNote}>Create+</button>
                         </div>
-                        <div style={{ display: show}}>
-                            <CreateNote   callbackFromNotepg={this.getCreatNoteData} currentToken={currentToken} Auth={Auth} userId={userId} />
+                        <div className="note-inner-body">
+                            <div style={{display: showEdit}}>
+                                <div className="create-edit-noteBtn-body">
+                                    <button type="submit" className="edit-cancelBtn" style={{display: showEdit}} onClick={this.closeEditForm}>x</button>
+                                </div>    
+                                <EditNote reRenderRecords={this.componentDidUpdate} currentToken={currentToken} noteId={noteId} Auth={Auth} userId={userId} />
+                            </div>
+                            <div style={{ display: show}}>
+                                <CreateNote reRenderRecords={this.componentDidUpdate} currentToken={currentToken} Auth={Auth} userId={userId} />
+                            </div>
+                            {items && getItems()}
                         </div>
-                        {items && getItems()}
                      </div>
                 </div>
             </div>

@@ -108,36 +108,36 @@ class Login extends Component {
         //Fetch registration form.
         const registerButton = this.state.registerButton;
         if (registerButton == true) {
-            return <Router><Route registerButton='/Register' component={Register}/></Router>
+            return (
+                    <Router>
+                        <Route registerButton='/Register' component={Register}/>
+                    </Router>
+            );
         }
         return (
-            <Router>
-                <div className="content"> 
-                    <div className="base-form">
-                        <form onSubmit={this.onSubmit}>
-                            <div className="form-title"><h3 className="my-3"> Login Form</h3></div>
+            <div className="base-form">
+                <form onSubmit={this.onSubmit}>
+                    <div className="form-title"><h3 className="my-3"> Login Form</h3></div>
 
-                            <div className="form-body">
-                                <div className="firstfield-rw">
-                                    <label>Username</label>
-                                    <input type="email" id="email" name="email"  placeholder="email" value={this.state.username}  onChange={this.onChangeUsername}/>
-                                </div>
-                                <div className="secondfield-rw">
-                                    <label>Password</label>
-                                    <input type="password" id="password" name="password"  placeholder="password" value={this.state.password} onChange={this.onChangePassword}/>
-                                </div>
-                            </div>
-                            
-                            <div className= "footer">
-                                <button type="submit" className="loginBtn">Login</button>
-                            </div>
-                        </form>
-                        <div>
-                           <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button>
+                    <div className="form-body">
+                        <div className="firstfield-rw">
+                            <label>Username</label>
+                            <input type="email" id="email" name="email"  placeholder="email" value={this.state.username}  onChange={this.onChangeUsername} required/>
+                        </div>
+                        <div className="secondfield-rw">
+                            <label>Password</label>
+                            <input type="password" id="password" name="password"  placeholder="password" value={this.state.password} onChange={this.onChangePassword} required/>
                         </div>
                     </div>
+                    
+                    <div className="footer">
+                        <button type="submit" className="loginBtn">Login</button>
+                    </div>
+                </form>
+                <div className="login-signup-footer">
+                    <p> Have an account? No worries, Just Login! <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button></p>
                 </div>
-            </Router>
+            </div>
          );
     }
   }
