@@ -9,6 +9,9 @@ const config = require('../config/config');
 //Model imports
 const User = require('../models').Users;
 
+//import token generator
+const createToken = require('./auth/tokenGenerator').createToken;
+
 module.exports = {
    register(req, res) {
         //Hashing password using bcrypt
@@ -22,10 +25,7 @@ module.exports = {
             if (!user) {
                 return res.status(400).send('No data passed');
             }
-            // Create a token by making a payload and secrete key in config file
-            let token = jwt.sign({id: user.id}, config.keySecrete, {
-                expiresIn: 86400 // expires in 24hours
-            });
+            createToken(user.id);
             res.status(200).send({ auth: true, token: token});
             res.status(201).send(user);
         })
@@ -50,10 +50,7 @@ module.exports = {
                    token: null
                });
            }
-
-           let token = jwt.sign({ id: user.id }, config.keySecrete, {
-                expiresIn: 86400 // expires in 24hours
-           });
+           createToken(user.id);
            return res.status(200).send({ auth: true, token: token });
        })
        .catch(error => res.status(400).send({
