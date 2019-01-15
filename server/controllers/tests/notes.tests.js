@@ -29,7 +29,7 @@ describe('Test user functions scope', ()=> {
     it('Should fetch all current users', () =>{
 
         chai.request(app)
-        .get('/api/notes/users')
+        .get('/api/notes/users/'+User.id)
         .end((err, res) => {
             expect(res).to.have.status(200);
             expect(res).to.be.undefined;
