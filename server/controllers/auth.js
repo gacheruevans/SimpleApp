@@ -9,9 +9,6 @@ const config = require('../config/config');
 //Model imports
 const User = require('../models').Users;
 
-//Imports token verification function
-const verifyToken = require('./tokenization/tokenVerification').verifyToken;
-
 module.exports = {
    register(req, res) {
         //Hashing password using bcrypt

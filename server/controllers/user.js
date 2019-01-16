@@ -28,12 +28,20 @@ module.exports = {
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
-           // If everything is good, save to request for use in other routes
-           req.userId = decoded.id;
-            if(req.userId ) {
-                return User
+            // If everything is good, save to request for use in other routes
+            req.userId = decoded.id;
+            //Fetch all users
+            if(req.userId) {
+                User
                 .all()
-                .then(user => res.status(200).send(user))
+                .then(user => {
+                    if(!user) {
+                        res.status(400).send({
+                            message: 'No Records Found'
+                        });
+                    }
+                    res.status(200).send(user)
+                })
                 .catch(error => new Promise((resolve, reject) => {
                     if (error) {
                         return reject(error);
@@ -43,6 +51,7 @@ module.exports = {
             }  
         });
     },
+
     //Fetch user notes and details
     retrieve(req, res) {
         //Retrieve jwt access token generated stored in headers, when user logged in
@@ -63,7 +72,7 @@ module.exports = {
 
             //Find notes by [Decoded token user id]
             if(req.userId){
-                 User
+                return User
                 .findById(req.userId, {
                     include: [{
                         model: Notes,
@@ -79,12 +88,10 @@ module.exports = {
                      res.status(200).send(user)
                 })
                 .catch(error => new Promise((resolve, reject) => {
-                    sentry.captureMessage(error.message, function(error) {
-                      if (error) {
+                    if (error) {
                         return reject(error);
-                      }
-                      resolve();
-                    });
+                    }
+                    resolve();
                 }));
             }
             res.status(400).send({
