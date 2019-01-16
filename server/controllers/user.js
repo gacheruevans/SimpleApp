@@ -30,16 +30,22 @@ module.exports = {
            }
            // If everything is good, save to request for use in other routes
            req.userId = decoded.id;
-            if(req.userId == 0) {
+            if(req.userId ) {
                 return User
                 .all()
                 .then(user => res.status(200).send(user))
-                .catch(error => res.status(400).send(error));
+                .catch(error => new Promise((resolve, reject) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve();
+                }));
             }  
         });
     },
     //Fetch user notes and details
     retrieve(req, res) {
+        //Retrieve jwt access token generated stored in headers, when user logged in
         let token = req.headers['x-access-token'];
         if (!token) {
            res.status(403).send(
@@ -48,7 +54,7 @@ module.exports = {
         }
        jwt.verify(token, config.keySecrete, function(err, decoded) {
            if (err) {
-               return res.status(500).send(
+                res.status(500).send(
                    { auth: false, message: 'Failed to authenticate token.' }
                );
            }
@@ -56,27 +62,34 @@ module.exports = {
            req.userId = decoded.id;
 
             //Find notes by [Decoded token user id]
-                if(req.userId){
-                    return User
-                    .findById(req.userId, {
-                        include: [{
-                            model: Notes,
-                            as: 'noteItems'
-                        }],
-                    })
-                    .then(user => {
-                        if(!user) {
-                            return res.status(404).send({
-                                message: 'User Not Found'
-                            });
-                        }
-                        return res.status(200).send(user)
-                    })
-                    .catch(error => res.status(400).send(error));
-                }
-                res.status(400).send({
-                    message: 'Decoded token id not retrieved'
+            if(req.userId){
+                 User
+                .findById(req.userId, {
+                    include: [{
+                        model: Notes,
+                        as: 'noteItems'
+                    }],
                 })
+                .then(user => {
+                    if(!user) {
+                         res.status(404).send({
+                            message: 'User Not Found'
+                        });
+                    }
+                     res.status(200).send(user)
+                })
+                .catch(error => new Promise((resolve, reject) => {
+                    sentry.captureMessage(error.message, function(error) {
+                      if (error) {
+                        return reject(error);
+                      }
+                      resolve();
+                    });
+                }));
+            }
+            res.status(400).send({
+                message: 'Decoded token id not retrieved'
+            })
        });
     },
 
