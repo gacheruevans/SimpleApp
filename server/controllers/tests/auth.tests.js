@@ -46,7 +46,7 @@ describe('Test auth functions scope', ()=> {
         done();
     });
 
-    it('Should login user', (done) =>{
+    it('Should login a user', (done) =>{
         let User = {
             id: 2,
             username: 'tester@test.com',
@@ -75,11 +75,13 @@ describe('Test auth functions scope', ()=> {
         .post('/api/notes/login')
         .type('form')
         .send(User)
-        .end((err, res) => {
-            expect(res).to.have.status(400);
+        .end(res => {
+            expect(res).to.have.status(200);
+            expect(res.err).to.be.an('error')
         });
         done();
     });
+
     it('Should not create a new user without username', (done) =>{
         let newUser = {
             username: '',

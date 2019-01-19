@@ -16,7 +16,7 @@ module.exports = {
     
     //Fetch all users by [Decoded token user id] - Administrator Functionality
     list(req, res) {
-        let token = req.headers['x-access-token'];
+        let token = req.headers['x-access-token'] || req.headers.token;
         if (!token) {
            res.status(403).send(
                { auth: false, message: 'No token provided.'}
@@ -55,7 +55,7 @@ module.exports = {
     //Fetch user notes and details
     retrieve(req, res) {
         //Retrieve jwt access token generated stored in headers, when user logged in
-        let token = req.headers['x-access-token'];
+        let token = req.headers['x-access-token'] || req.headers.token;
         if (!token) {
            res.status(403).send(
                { auth: false, message: 'No token provided.'}
@@ -96,13 +96,13 @@ module.exports = {
             }
             res.status(400).send({
                 message: 'Decoded token id not retrieved'
-            })
+            });
        });
     },
 
     //Update user details by [Decoded token user id]
     update(req, res) {
-        let token = req.headers['x-access-token'];
+        let token = req.headers['x-access-token'] || req.headers.token;
         if (!token) {
            res.status(403).send(
                { auth: false, message: 'No token provided.'}
@@ -146,7 +146,7 @@ module.exports = {
 
     //Delete user record and all subsequent notes - Administrator Functionality
     destroy(req, res) {
-        let token = req.headers['x-access-token'];
+        let token = req.headers['x-access-token'] || req.headers.token;
         if (!token) {
            res.status(403).send(
                { auth: false, message: 'No token provided.'}

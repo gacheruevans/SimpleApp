@@ -4,6 +4,8 @@ import React, { Component } from "react";
 import { HashRouter as Router, Route } from 'react-router-dom';
 import axios from 'axios';
 
+import IconTabs from "../components/tabs/iconTabs";
+
 //Component imports
 import CreateNote from "./forms/createNoteForm";
 import EditNote from "./forms/editNoteForm";
@@ -88,6 +90,16 @@ class Welcome extends Component {
             noteId: fetchedNoteId
         });
     }
+    editDetailse(e) {
+        //Get current value fetched from the button
+        let userId =this.state.userId
+       //Set new state of note Id
+       this.setState({
+           showEditDetails: "block",
+           userId: userId
+       });
+   }
+
     closeEditForm() {
         this.setState({
             showEdit: "none",
@@ -159,6 +171,7 @@ class Welcome extends Component {
         }
     }
 
+
     render() {
 
         //Props passed to to Create New Note and Edit forms.
@@ -205,11 +218,11 @@ class Welcome extends Component {
 
         return (
             <div>
-                <div className="logOutBtn-body">
-                    <button className="logOutBtn" onClick={this.signOut}>Sign Out</button>
+                <div>
+                    <IconTabs username={this.state.users.username} exitApp={this.signOut} editDetails={this.editDetails}/>
                 </div>
                 <div className="account-body">
-                    <h3>{this.state.users.username} Account</h3>
+                    
                      <div className="note-card">
                         <div className="create-edit-noteBtn-body">
                             <button type="submit" className="cancelBtn" style={{display: show}} onClick={this.closeNoteForm}>Cancel</button>

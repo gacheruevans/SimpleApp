@@ -11,7 +11,6 @@ import axios from "axios";
 
 //Styles
 import "./sass/main.scss";
-import { isUndefined } from "util";
 
 class App extends Component {
   constructor(props, context) {
@@ -22,30 +21,54 @@ class App extends Component {
       auth: false,
       toLogin: true,
       toDashboard: true,
-      data: []
+      userData: {}
     };
   }
-  // componentDidUpdate(userData) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.state.auth !== this.data.auth) {
-  //       console.log("UserData >>>>>>>", userData)
-  //       this.setState({
-  //         auth: userData.Auth,
-  //         userId: userData.userId,
-  //         token: userData.Token
-  //       });
-  //   }
-  // }
+  componentDidMount(){
+    let userId = this.state.userId;
+    let token= this.state.token;
+
+    let headers = {
+        "Content-Type" : "application/json",
+        "x-access-token" : token 
+    };
+    
+    axios.get("http://localhost:3000/api/notes/users/"+userId, {headers: headers})
+    .then(res => {
+        //Fetches response data from api and sets it to users object
+        const newUserData = res.data;
+        this.setState({ 
+          userData: newUserData
+        });
+    });
+  }
+  componentDidUpdate(userData) {
+    if (this.state.auth !== this.data.auth) {
+        this.setState({
+          auth: userData.Auth,
+          userId: userData.userId,
+          token: userData.Token
+        });
+    }
+  }
 
   getAuthState(userData) {
     if(userData) {
-      //this.componentDidUpdate(userData)
+      this.componentDidUpdate(userData)
       this.setState({
         auth: userData.Auth,
         userId: userData.userId,
         token: userData.Token
       });
+    }else{
+      let userData = {
+        userId: this.state.userId,
+        token: this.state.token,
+        authState:  this.state.auth
+      }
     }
+
+    
   }
 
   render() {
@@ -53,8 +76,6 @@ class App extends Component {
     let userId = this.state.userId;
     let token= this.state.token;
     let authState =  this.state.auth;
-
-    // console.log("UserData after getAuthState is called >>>>>>", userData)
 
     let displayComponent = () => {
       if (authState == false) {
@@ -72,7 +93,7 @@ class App extends Component {
     
     return (
       <div>
-        <Header />
+        { authState == false ? <Header /> : ''}
         <div className="content"> 
           <Router>
             { displayComponent() }

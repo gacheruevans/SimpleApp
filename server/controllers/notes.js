@@ -14,6 +14,7 @@ module.exports = {
         if (!token){
             return res.status(401).send({ auth: false, message: 'No token provided.' });
         } 
+
         jwt.verify(token, config.keySecrete, (err, decoded) => {
             if (err) {
                 return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
@@ -25,11 +26,21 @@ module.exports = {
                     description: req.body.description,
                     userId: decoded.id
                 })
-                .then(userNotes => res.status(201).send(userNotes))
-                .catch(error => res.status(400).send(error));
+                .then(userNotes => {
+                    res.status(201).send(userNotes);
+                    
+                })
+                .catch(error => new Promise((resolve, reject) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve();
+
+                }));
             }
         });   
     },
+
     //Update note by [Decoded token user id] & passed note id
     update(req, res) {
         let  token = req.headers['x-access-token'];
@@ -62,7 +73,13 @@ module.exports = {
                     .then(updatedNote => res.status(200).send(updatedNote))
                     .catch(error => res.status(400).send(error));
                 })
-                .catch(error => res.status(400).send(error));
+                .catch(error => new Promise((resolve, reject) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve();
+
+                }));
             }
         }); 
     },
@@ -95,6 +112,13 @@ module.exports = {
                     .then(()=> res.status(204).send())
                     .catch(error => res.status(400).send(error));
                 })
+                .catch(error => new Promise((resolve, reject) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve();
+
+                }));
             }
         });
     },
