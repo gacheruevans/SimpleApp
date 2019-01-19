@@ -5,11 +5,13 @@ import { HashRouter as Router, Route } from 'react-router-dom';
 import axios from 'axios';
 
 import IconTabs from "../components/tabs/iconTabs";
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 //Component imports
 import CreateNote from "./forms/createNoteForm";
 import EditNote from "./forms/editNoteForm";
 import Login from "./forms/loginForm";
+import EditUserDetails from "./forms/editUserForm";
 
 //Styles
 import "./style.scss";
@@ -20,6 +22,8 @@ class Welcome extends Component {
         this.state = {
             show: "none",
             showEdit: "none",
+            showEditDetails: "none",
+            top: false,
             logOut: false,
             userId: this.props.userId,
             passedAuth: this.props.Auth,
@@ -36,6 +40,8 @@ class Welcome extends Component {
          this.createNote = this.createNote.bind(this);
          this.closeNoteForm = this.closeNoteForm.bind(this);
          this.closeEditForm = this.closeEditForm.bind(this);
+         this.editDetails = this.editDetails.bind(this);
+         this.closeEditDetails = this.closeEditDetails.bind(this);
          this.signOut = this.signOut.bind(this);
     }
 
@@ -90,16 +96,22 @@ class Welcome extends Component {
             noteId: fetchedNoteId
         });
     }
-    editDetailse(e) {
+    editDetails(e) {
         //Get current value fetched from the button
         let userId =this.state.userId
        //Set new state of note Id
        this.setState({
            showEditDetails: "block",
-           userId: userId
+           userId: userId,
+           top: true
        });
    }
-
+   closeEditDetails(e) {
+        //Close drawer
+        this.setState({
+            top: false
+        });
+   }
     closeEditForm() {
         this.setState({
             showEdit: "none",
@@ -221,6 +233,13 @@ class Welcome extends Component {
                 <div>
                     <IconTabs username={this.state.users.username} exitApp={this.signOut} editDetails={this.editDetails}/>
                 </div>
+                <SwipeableDrawer
+                    anchor="top"
+                    open={this.state.top}
+                    onClose={this.closeEditDetails}
+                >
+                    <EditUserDetails />
+                </SwipeableDrawer>
                 <div className="account-body">
                     
                      <div className="note-card">
