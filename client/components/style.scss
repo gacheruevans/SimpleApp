@@ -36,7 +36,9 @@ h3 {
   border: 1px solid #d3d3d3;
   border-radius: 3px;
 }
-
+.note-inner-body {
+  margin: 60px auto;
+}
 .list-items {
   background-color: #ffffff;
   border-bottom: 1px solid #ebebeb;
@@ -44,7 +46,7 @@ h3 {
   padding: 20px;
 }
 .note-body {
-  background-color: #fff9f4;
+  background-color: #fdf9f6;
   border-radius: 3px;
   font-family: "Eina 03";
   font-size: 18px;
@@ -60,10 +62,11 @@ h3 {
   font-style: italic;
 }
 
-.create-noteBtn-body {
+.create-edit-noteBtn-body {
+  position: relative;
+  display: inline-flex;
   float: right;
 }
-
 .createBtn {
   background-color: #4caf54;
   border: none;

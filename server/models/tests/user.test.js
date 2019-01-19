@@ -8,15 +8,19 @@ const Users = require('../../models').Users;
 const Notes = require('../../models').Notes;
 
 
-describe('Get all Notes By Id', ()=> {
+describe('Get all Notes By user id', ()=> {
     //Test will pass if we get all user notes
     it('Should return all notes of a user by Id', (done) => {
-        let NotesMock = sinon.mock(Users);
-        let expectedResult = {status: true, id: 1 ,username:'', noteItems: []};
-        NotesMock.expects('find').withArgs({id: 23451}).yields(null, expectedResult);
-        Notes.find((err,res) => {
+        let UsersMock = sinon.mock(Users);
+        let NotesMock = sinon.mock(Notes);
+        let UserDetails = {status: true, id: 1, username:'tester'};
+        let expectedResult = {status: true, id: 1 , title:'New note', description: 'My first note', userId: UserDetails.id};
+        NotesMock.expects('find').withArgs({userId: 1}).yields(null, expectedResult);
+        Notes.findByPk((err,res) => {
             NotesMock.verify();
             NotesMock.restore();
+            expect(status).to.be.true;
+            expect
             done();
         });
     });
@@ -25,10 +29,11 @@ describe('Get all Notes By Id', ()=> {
         let NotesMock = sinon.mock(Notes);
         let expectedResult = {status: false, error: 'Something went wrong'};
         NotesMock.expects('find').withArgs({_id: 23451}).yields(expectedResult, null);
-        Notes.find((err, res)=> {
+        Notes.findOne((err, res)=> {
             NotesMock.verify();
             NotesMock.restore();
-            expect(err.status).to.not.be.true;
+            expect(status).to.not.be.true;
+            expect(error).to.be.eql('Something went wrong')
             done();
         });
     });

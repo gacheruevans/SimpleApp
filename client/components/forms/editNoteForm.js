@@ -1,7 +1,6 @@
 "use strict"
 //Libs
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 import axios from "axios";
 
 //Styles
@@ -11,10 +10,12 @@ class EditNote extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            title: props.title,
-            description: props.description,
-            userId: props.userId,
-            noteId: props.noteId
+            title: this.props.title,
+            description: this.props.description,
+            userId: this.props.userId,
+            passedAuth: this.props.Auth,
+            currentToken: this.props.currentToken,
+            reRender: this.props.reRenderRecords
         };
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
@@ -25,16 +26,17 @@ class EditNote extends Component {
             title: e.target.value
         });
     }
+    
     onChangeDescription (e){
         this.setState({
             description: e.target.value
         });
     }
-  
     onSubmit(e) {
         e.preventDefault();
-        const userId = this.state.userId;
-        const noteID = this.state.noteId;
+         //Fetch  user & note ids fetched from the state
+        let userId = this.state.userId;
+        let fetchedNoteId = this.props.noteId;
 
         const recordData = {
             title: this.state.title,
@@ -42,10 +44,24 @@ class EditNote extends Component {
         }
         //Checks whether there is data in the recordData object
         if (recordData) {
-            axios.put("http://localhost:3000/api/notes/users/"+userId+"/note/"+noteID, recordData)
-            .then(res => console.log(res.data));
+            //Header that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type": "application/json",
+                "x-access-token": token 
+            };
 
+            axios.put("http://localhost:3000/api/notes/users/"+userId+"/note/"+fetchedNoteId, recordData, {headers: headers})
+                .then(res => {
+                    console.log(res.data)
+                    //Clears data from states
+                    this.setState({
+                        title: "",
+                        description: ""
+                    }); 
+                });
             alert("Note has been Edited successfully!");
+            this.props.reRenderRecords;
 
         }else{
             alert("Something went wrong!!!");
@@ -54,23 +70,27 @@ class EditNote extends Component {
   
     render() {
       return (
-          <div className="base-form">
+          <div className="edit-base-form">
             <form onSubmit={this.onSubmit}>
-                <div className="form-title"><h3 className="my-3"> Edit Note Form</h3></div>
+                <div className="form-edit-title"><h3 className="my-3"> Edit Note</h3></div>
 
-                <div className="form-body">
-                    <div className="firstfield-rw">
-                        <label>Title</label>
-                        <input type="text" id="title" name="title"  value={this.state.title}  onChange={this.onChangeTitle} required/>
+                <div className="form-body grid-container">
+                    <div className="grid-item">
+                        <label className="edit-label">Title</label>
                     </div>
-                    <div className="secondfield-rw">
-                        <label className="description">Description</label>
-                        <textarea id="description" name="description" rows="4" cols="50" value={this.state.description} onChange={this.onChangeDescription} required></textarea>
+                    <div className="grid-item">
+                        <input className="edit-input" type="text" id="title" name="title"  value={this.state.title}  onChange={this.onChangeTitle} required/>
+                    </div>
+                    <div className="grid-item">
+                        <label className="edit-label">Description</label>
+                    </div>
+                    <div className="grid-item">
+                        <textarea className="edit-input" id="description" name="description" rows="2" cols="40" value={this.state.description} onChange={this.onChangeDescription} required></textarea>
                     </div>
                 </div>
                 
                 <div className= "footer">
-                    <button type="submit" className="registerBtn">Edit</button>
+                    <button type="submit" className="registerBtn">Update</button>
                 </div>
             </form>
         </div> 

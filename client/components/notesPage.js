@@ -4,10 +4,14 @@ import React, { Component } from "react";
 import { HashRouter as Router, Route } from 'react-router-dom';
 import axios from 'axios';
 
+import IconTabs from "../components/tabs/iconTabs";
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+
 //Component imports
 import CreateNote from "./forms/createNoteForm";
 import EditNote from "./forms/editNoteForm";
 import Login from "./forms/loginForm";
+import EditUserDetails from "./forms/editUserForm";
 
 //Styles
 import "./style.scss";
@@ -16,71 +20,131 @@ class Welcome extends Component {
     constructor(props) {
         super(props);
         this.state = {
-             
-            editButton: false,
-            createButton: false,
+            show: "none",
+            showEdit: "none",
+            showEditDetails: "none",
+            top: false,
             logOut: false,
-            usersId: '47',
-            noteId:'',
-            users: []
+            userId: this.props.userId,
+            passedAuth: this.props.Auth,
+            currentToken: this.props.token,
+            deleted: false,
+            status: this.props.createButton,
+            authState: this.props.currentAuthState,
+            users: [],
+            noteId: ""
          };
+
          this.deleteNote = this.deleteNote.bind(this);
          this.editNote = this.editNote.bind(this);
          this.createNote = this.createNote.bind(this);
+         this.closeNoteForm = this.closeNoteForm.bind(this);
+         this.closeEditForm = this.closeEditForm.bind(this);
+         this.editDetails = this.editDetails.bind(this);
+         this.closeEditDetails = this.closeEditDetails.bind(this);
          this.signOut = this.signOut.bind(this);
     }
 
     componentDidMount() {
-        let userId = this.state.usersId;
-        let header = { 
-            headers: {'Content-Type': undefined }
-        };
-        axios.get('http://localhost:3000/api/notes/users/'+userId , header)
-            .then(res => {
-                this.setState({ users: res.data });
-            })
+        this.getRecords();
     }
 
-    createNote(e) {
-        e.preventDefault();
+    componentDidUpdate(prevProps, prevState){
+       this.getRecords();
+    }
+   
+    getRecords(){
+         //Fetch user Id from login form after token has been decoded.
+         let userId = this.props.userId;
+        if(userId) {
+            //Fetch tokenHeader that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type" : "application/json",
+                "x-access-token" : token 
+            };
+    
+            axios.get("http://localhost:3000/api/notes/users/"+userId, {headers: headers})
+                .then(res => {
+                    //Fetches response data from api and sets it to users object
+                    const updatedUsers = res.data;
+                    this.setState({ 
+                        users: updatedUsers
+                    });
+                });
+        }
+    }
+    
+    createNote() {
         //Set new state of to true
         this.setState({
-            createButton: true
+            show: "block"
+        });
+    }
+    closeNoteForm() {
+        this.setState({
+            show: "none"
         });
     }
 
     editNote(e) {
-        e.preventDefault();
-        //Set new state of to true
+         //Get current value fetched from the button
+         let fetchedNoteId = e.target.value;
+        //Set new state of note Id
         this.setState({
-            editButton: true
+            showEdit: "block",
+            noteId: fetchedNoteId
+        });
+    }
+    editDetails(e) {
+        //Get current value fetched from the button
+        let userId =this.state.userId
+       //Set new state of note Id
+       this.setState({
+           showEditDetails: "block",
+           userId: userId,
+           top: true
+       });
+   }
+   closeEditDetails(e) {
+        //Close drawer
+        this.setState({
+            top: false
+        });
+   }
+    closeEditForm() {
+        this.setState({
+            showEdit: "none",
+            noteId: ""
         });
     }
 
     deleteNote(e) {
         e.preventDefault();
+        //Get current value fetched from the button
+        let fetchedNoteId = e.target.value;
+        let userId = this.state.userId;
 
-        //Get value and set state with new value passed in values attribute in form
-        this.setState({
-            noteId: e.target.value
-        });
-
-        const userId = this.state.usersId;
-        const noteId = this.state.noteId;
-
-        if(noteId){
+        if(fetchedNoteId){
             alert("Are you sure you want to delete the note?");
+            //Fetch tokenHeader that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type" : "application/json",
+                "x-access-token" : token 
+            };
 
             //Connection to backend api
-            axios.delete('http://localhost:3000/api/notes/users/'+userId+'/note/'+noteId)
+            axios.delete("http://localhost:3000/api/notes/users/"+userId+"/note/"+fetchedNoteId, {headers: headers})
             .then(res => {
-                this.setState({ users: res.data });
+                const newUsersData= res.data;
+                this.setState({
+                    users: newUsersData,
+                    deleted: true
+                });
             })
+            this.componentDidUpdate();
 
-            //After post of data / deletion of note clear the state of noteId
-            this.setState({
-                noteId: ''
-            }); 
         }else{
             alert("Something went wrong");
         }
@@ -88,18 +152,48 @@ class Welcome extends Component {
 
     signOut(e) {
 
-        //Connection to backend api
-        axios.delete('http://localhost:3000/api/notes/users/'+userId+'/logout')
-        .then(res => {
-            this.setState({ users: res.data });
-        })
-        
-        this.setState({
-            logOut: true
-        });
+        //fetch user is from state
+        let userId = this.state.userId;
+
+        if(userId){
+
+            alert("Are you sure you want to Sign out?");
+            //Fetch tokenHeader that will pass token to api
+            let token = this.state.currentToken;
+            let headers = {
+                "Content-Type" : "application/json",
+                "x-access-token" : token 
+            };
+            //Fetch user id from state
+            let userId = this.state.userId;
+            //Connection to backend api
+            axios.post("http://localhost:3000/api/notes/users/"+userId+"/logout", {headers: headers})
+            .then(res => {
+                console.log(res.data)
+            });
+            //clear states
+            this.setState({ 
+                logOut: true,
+                userId: "",
+                passedAuth: "",
+                currentToken: "", 
+            });
+        }else{
+            alert("no user Id provided went wrong");
+        }
     }
 
+
     render() {
+
+        //Props passed to to Create New Note and Edit forms.
+        let show = this.state.show;
+        let showEdit = this.state.showEdit;
+        let userId = this.state.userId;
+        let Auth = this.state.passedAuth;
+        let noteId = this.state.noteId;
+        let currentToken = this.state.currentToken;
+
         //Loop through noteItem object to get notes.
         const items= this.state.users.noteItems;
         let getItems = () => {
@@ -122,36 +216,49 @@ class Welcome extends Component {
                 </div>)
              });
         }
-
-        //Checks if edit button state is true, so at to redirect the user edit form
-        const editButton = this.state.editButton;
-        if (editButton == true) {
-            return <Router><Route editButton='/EditNote' component={EditNote}/></Router>
-        }
-
-        //Fetch Create New Note form.
-        const createButton = this.state.createButton;
-        if (createButton == true) {
-            return <Router><Route createButton='/CreateNote' component={CreateNote}/></Router>
-        }
-
+        
         //Redirect back to Login.
         const logOut = this.state.logOut;
+
         if (logOut == true) {
-            return <Router><Route logOut='/Login' component={Login}/></Router>
+            return (
+                <Router>
+                    <Route logOut="/Login" component={Login}/>
+                </Router>
+            );
         }
+
         return (
             <div>
-                <div className="logOutBtn-body">
-                    <button className="logOutBtn" onClick={this.signOut}>Sign Out</button>
+                <div>
+                    <IconTabs username={this.state.users.username} exitApp={this.signOut} editDetails={this.editDetails}/>
                 </div>
+                <SwipeableDrawer
+                    anchor="top"
+                    open={this.state.top}
+                    onClose={this.closeEditDetails}
+                >
+                    <EditUserDetails />
+                </SwipeableDrawer>
                 <div className="account-body">
-                    <h3>{this.state.users.username} Account</h3>
+                    
                      <div className="note-card">
-                        <div className="create-noteBtn-body">
+                        <div className="create-edit-noteBtn-body">
+                            <button type="submit" className="cancelBtn" style={{display: show}} onClick={this.closeNoteForm}>Cancel</button>
                             <button className="createBtn" onClick={this.createNote}>Create+</button>
                         </div>
-                        {items && getItems()}
+                        <div className="note-inner-body">
+                            <div style={{display: showEdit}}>
+                                <div className="create-edit-noteBtn-body">
+                                    <button type="submit" className="edit-cancelBtn" style={{display: showEdit}} onClick={this.closeEditForm}>x</button>
+                                </div>    
+                                <EditNote reRenderRecords={this.componentDidUpdate} currentToken={currentToken} noteId={noteId} Auth={Auth} userId={userId} />
+                            </div>
+                            <div style={{ display: show}}>
+                                <CreateNote reRenderRecords={this.componentDidUpdate} currentToken={currentToken} Auth={Auth} userId={userId} />
+                            </div>
+                            {items && getItems()}
+                        </div>
                      </div>
                 </div>
             </div>

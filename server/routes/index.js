@@ -1,15 +1,21 @@
 'use strict'
+
+// Controller imports
 const authController = require('../controllers').auth;
 const notesController = require('../controllers').notes;
 const userController = require('../controllers').user;
 
 module.exports = (app) => {
-    app.get('/api/notes', (req,res) => res.status(200).send({
-        message: 'welcome to Notes Application please login'
-    }));
 
-    app.post('/api/notes/register', authController.register); //register users
+    app.get('/api/notes', (req,res) => {
+        res.status(200).send({
+            message: 'welcome to Notes Application please login'
+        })
+    });
+
     app.post('/api/notes/login', authController.login); //login of users
+     
+    app.post('/api/notes/register', authController.register); //register users
     app.post('/api/notes/users/:userId/logout', authController.logout);//logout of users
 
     app.get('/api/notes/users', userController.list); //list all users

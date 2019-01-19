@@ -3,6 +3,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import axios from "axios";
+const jwt = require('jsonwebtoken');
+const config = require('../../../server/config/config');
 
 //Components
 import UserDashboard from '../notesPage';
@@ -15,8 +17,11 @@ class Login extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            username:"",
-            password: "",
+            username:'',
+            password: '',
+            isAuth: false,
+            userId: '',
+            token:'',
             dashBoard: false,
             registerButton: false
         };
@@ -53,65 +58,99 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        
+
         // Checks if data is in recordData object
         if(recordData) {
              axios.post('http://localhost:3000/api/notes/login', recordData)
-            .then(res => console.log(res.data));
-            
-            this.setState({
-                username: "",
-                password:"",
-                toDashBoard: true
-            }); 
+            .then(res => {
+
+                let newAuth = res.data.auth;
+                let newToken = res.data.token;
+
+                let decodedUserId = jwt.verify(newToken, config.keySecrete, function(err, decoded) {
+                    if (err) {
+                        return res.status(500).send(
+                            { auth: false, message: 'Failed to authenticate token.' }
+                        );
+                    }
+                    // Send decoded id
+                    return decoded.id;
+                 });
+                 //After post of data clear the state of username and password and set userId with decoded id from token
+                 this.setState({
+                    username: '',
+                    password: '',
+                    toDashBoard: true,
+                    token: newToken,
+                    isAuth: newAuth,
+                    userId: decodedUserId
+                }); 
+               
+                //Get new updated data based on successful login
+                const userData = {
+                    Auth : this.state.isAuth,
+                    userId :  this.state.userId,
+                    currentToken : this.state.token
+                }
+                // Pass userData object to authauthStateCallback props
+                this.props.authStateCallback(userData);
+            });
+                
         }else{
             alert('Incorrect username and password!- retry again!!')
         }
     }
-  
+
     render() {
-        //Checks state of dashboard so at to redirect the user.
-        const toDashBoard = this.state.toDashBoard;
+    
+        // Checks state of dashboard so at to redirect the user.
+        let toDashBoard = this.state.toDashBoard;
+       
+        let Auth = this.state.isAuth;
+        let userId =  this.state.userId;
+        let currentToken = this.state.token;
+
         if (toDashBoard == true) {
-            return <Router><Route toDashBoard='/UserDashboard' component={UserDashboard}/></Router>
+            return (
+                <Router>    
+                    <Route toDashBoard='/UserDashboard' component={ () => <UserDashboard token={currentToken} Auth={Auth} userId={userId} />} />
+                </Router>
+            );
         }
         //Fetch registration form.
         const registerButton = this.state.registerButton;
         if (registerButton == true) {
-            return <Router><Route registerButton='/Register' component={Register}/></Router>
+            return (
+                    <Router>
+                        <Route registerButton='/Register' component={Register}/>
+                    </Router>
+            );
         }
         return (
-            <Router>
-                <div className="content"> 
-                    <div className="base-form">
-                        <form onSubmit={this.onSubmit}>
-                            <div className="form-title"><h3 className="my-3"> Login Form</h3></div>
+            <div className="base-form">
+                <form onSubmit={this.onSubmit}>
+                    <div className="form-title"><h3 className="my-3"> Login Form</h3></div>
 
-                            <div className="form-body">
-                                <div className="firstfield-rw">
-                                    <label>Username</label>
-                                    <input type="email" id="email" name="email"  placeholder="email" value={this.state.username}  onChange={this.onChangeUsername}/>
-                                </div>
-                                <div className="secondfield-rw">
-                                    <label>Password</label>
-                                    <input type="password" id="password" name="password"  placeholder="password" value={this.state.password} onChange={this.onChangePassword}/>
-                                </div>
-                            </div>
-                            
-                            <div className= "footer">
-                                <button type="submit" className="loginBtn">Login</button>
-                            </div>
-                        </form>
-                        <div>
-                           <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button>
+                    <div className="form-body">
+                        <div className="firstfield-rw">
+                            <label>Username</label>
+                            <input type="email" id="email" name="email"  placeholder="email" value={this.state.username}  onChange={this.onChangeUsername} required/>
+                        </div>
+                        <div className="secondfield-rw">
+                            <label>Password</label>
+                            <input type="password" id="password" name="password"  placeholder="password" value={this.state.password} onChange={this.onChangePassword} required/>
                         </div>
                     </div>
+                    
+                    <div className="footer">
+                        <button type="submit" className="loginBtn">Login</button>
+                    </div>
+                </form>
+                <div className="login-signup-footer">
+                    <p> Don't have an account? No worries, Just sign up! <button type="submit" className="registerBtn" onClick={this.registerUser}>Sign Up</button></p>
                 </div>
-            </Router>
+            </div>
          );
     }
   }
   export default Login;
-
-  
-
